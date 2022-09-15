@@ -1,6 +1,6 @@
-﻿using Solnet.Rpc.Core.Http;
-using Solnet.Rpc.Messages;
-using Solnet.Rpc.Models;
+﻿using Solana.Unity.Rpc.Core.Http;
+using Solana.Unity.Rpc.Messages;
+using Solana.Unity.Rpc.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

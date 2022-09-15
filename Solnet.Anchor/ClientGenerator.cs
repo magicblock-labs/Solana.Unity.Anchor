@@ -7,7 +7,7 @@ using Solnet.Anchor.Models.Accounts;
 using Solnet.Anchor.Models.Types;
 using Solnet.Anchor.Models.Types.Base;
 using Solnet.Anchor.Models.Types.Enum;
-using Solnet.Wallet.Utilities;
+using Solana.Unity.Wallet.Utilities;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -93,15 +93,15 @@ namespace Solnet.Anchor
                 UsingDirective(IdentifierName("System.Linq")),
                 UsingDirective(IdentifierName("System.Numerics")),
                 UsingDirective(IdentifierName("System.Threading.Tasks")),
-                UsingDirective(IdentifierName("Solnet")),
-                UsingDirective(IdentifierName("Solnet.Programs.Abstract")),
-                UsingDirective(IdentifierName("Solnet.Programs.Utilities")),
-                UsingDirective(IdentifierName("Solnet.Rpc")),
-                UsingDirective(IdentifierName("Solnet.Rpc.Builders")),
-                UsingDirective(IdentifierName("Solnet.Rpc.Core.Http")),
-                UsingDirective(IdentifierName("Solnet.Rpc.Core.Sockets")),
-                UsingDirective(IdentifierName("Solnet.Rpc.Types")),
-                UsingDirective(IdentifierName("Solnet.Wallet")),
+                UsingDirective(IdentifierName("Solana.Unity")),
+                UsingDirective(IdentifierName("Solana.Unity.Programs.Abstract")),
+                UsingDirective(IdentifierName("Solana.Unity.Programs.Utilities")),
+                UsingDirective(IdentifierName("Solana.Unity.Rpc")),
+                UsingDirective(IdentifierName("Solana.Unity.Rpc.Builders")),
+                UsingDirective(IdentifierName("Solana.Unity.Rpc.Core.Http")),
+                UsingDirective(IdentifierName("Solana.Unity.Rpc.Core.Sockets")),
+                UsingDirective(IdentifierName("Solana.Unity.Rpc.Types")),
+                UsingDirective(IdentifierName("Solana.Unity.Wallet")),
                 UsingDirective(IdentifierName(idl.Name.ToPascalCase())),
                 UsingDirective(IdentifierName(idl.Name.ToPascalCase() + ".Program")),
                 UsingDirective(IdentifierName(idl.Name.ToPascalCase() + ".Errors"))
@@ -161,7 +161,7 @@ namespace Solnet.Anchor
                     initExpressions.Add(InvocationExpression(
                         MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Rpc")),
+                        QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
                 IdentifierName("AccountMeta")),
                         IdentifierName(singleAcc.IsMut ? "Writable" : "ReadOnly")),
@@ -219,7 +219,7 @@ namespace Solnet.Anchor
             var initExpr = InitializerExpression(SyntaxKind.CollectionInitializerExpression, ClientGeneratorDefaultValues.OpenBraceToken, SeparatedList<SyntaxNode>(initExprs), Token(SyntaxKind.CloseBraceToken));
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(
-                GenericName(Identifier("List"), TypeArgumentList(SeparatedList(new TypeSyntax[] { QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Rpc")),
+                GenericName(Identifier("List"), TypeArgumentList(SeparatedList(new TypeSyntax[] { QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
                 IdentifierName("AccountMeta")) }))),
                 SingletonSeparatedList(VariableDeclarator(Identifier("keys"), null,
@@ -273,7 +273,7 @@ namespace Solnet.Anchor
                     Argument(IdentifierName("offset"))
                 })))));
 
-            body.Add(ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Rpc")),
+            body.Add(ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
                 IdentifierName("TransactionInstruction")), null,
                 InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList(new ExpressionSyntax[]
@@ -286,7 +286,7 @@ namespace Solnet.Anchor
 
                 })))));
 
-            return MethodDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers, QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Rpc")),
+            return MethodDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers, QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
                 IdentifierName("TransactionInstruction")), null, Identifier(instr.Name.ToPascalCase()), null, ParameterList(SeparatedList(parameters)), List<TypeParameterConstraintClauseSyntax>(), Block(body), null);
         }
@@ -1067,7 +1067,7 @@ namespace Solnet.Anchor
             }
 
 
-            body.Add(LocalDeclarationStatement(VariableDeclaration(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Rpc")),
+            body.Add(LocalDeclarationStatement(VariableDeclaration(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
                 IdentifierName("TransactionInstruction")),
                 SingletonSeparatedList(VariableDeclarator(
@@ -1271,7 +1271,7 @@ namespace Solnet.Anchor
                                                         QualifiedName(
                                                             QualifiedName(
                                                                 QualifiedName(
-                                                                    IdentifierName("Solnet"),
+                                                                    IdentifierName("Solana.Unity"),
                                                                     IdentifierName("Rpc")),
                                                                 IdentifierName("Messages")),
                                                             GenericName(
@@ -1282,7 +1282,7 @@ namespace Solnet.Anchor
                                                                         QualifiedName(
                                                                             QualifiedName(
                                                                                 QualifiedName(
-                                                                                    IdentifierName("Solnet"),
+                                                                                    IdentifierName("Solana.Unity"),
                                                                                     IdentifierName("Rpc")),
                                                                                 IdentifierName("Models")),
                                                                             IdentifierName("AccountInfo")))))),
@@ -1333,7 +1333,7 @@ namespace Solnet.Anchor
                     PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"), IdentifierName("WasSuccessful")));
 
 
-            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Programs")), IdentifierName("Models")),
+            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
                        Generic("AccountResultWrapper", typeName)),
                        ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
 
@@ -1353,7 +1353,7 @@ namespace Solnet.Anchor
             body.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName("var"),
                 SingletonSeparatedList(VariableDeclarator(Identifier("resultingAccount"), null, EqualsValueClause(desser))))));
 
-            var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Programs")), IdentifierName("Models")),
+            var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
                        Generic("AccountResultWrapper", typeName)), ArgumentList(SeparatedList(new[]
                        {
                            Argument(IdentifierName("res")),
@@ -1362,13 +1362,13 @@ namespace Solnet.Anchor
 
             body.Add(ReturnStatement(retVal));
 
-            // Solnet.Rpc.Types.Commitment commitment = Commitment.Finalized
+            // Solana.Unity.Rpc.Types.Commitment commitment = Commitment.Finalized
             EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Finalized")));
 
             return MethodDeclaration(List<AttributeListSyntax>(),
                        ClientGeneratorDefaultValues.PublicAwaitModifiers,
 
-                       Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Programs")), IdentifierName("Models")),
+                       Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
                        Generic("AccountResultWrapper", typeName)))
 
 ,
@@ -1393,7 +1393,7 @@ namespace Solnet.Anchor
 
             //build memcmp filters
 
-            var memCmpType = QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Rpc")), IdentifierName("Models")), IdentifierName("MemCmp"));
+            var memCmpType = QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")), IdentifierName("Models")), IdentifierName("MemCmp"));
             var memCmp = ObjectCreationExpression(memCmpType, default,
                     InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList<ExpressionSyntax>(new[]{
                         AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
@@ -1435,9 +1435,9 @@ namespace Solnet.Anchor
                             MemberBindingExpression(IdentifierName("Count"))),
                         LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))));
 
-            //new Solnet.Programs.Models.ProgramAccountsResultWrapper<List<Reserve>>(res);
+            //new Solana.Unity.Programs.Models.ProgramAccountsResultWrapper<List<Reserve>>(res);
 
-            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Programs")), IdentifierName("Models")),
+            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
                        Generic("ProgramAccountsResultWrapper", Generic("List", typeName))),
                        ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
 
@@ -1486,7 +1486,7 @@ namespace Solnet.Anchor
             body.Add(ExpressionStatement(InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("resultingAccounts"), IdentifierName("AddRange")),
                             ArgumentList(SingletonSeparatedList(Argument(selectCall))))));
 
-            var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Programs")), IdentifierName("Models")),
+            var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
                        Generic("ProgramAccountsResultWrapper", Generic("List", typeName))), ArgumentList(SeparatedList(new[]
                        {
                            Argument(IdentifierName("res")),
@@ -1495,7 +1495,7 @@ namespace Solnet.Anchor
 
             body.Add(ReturnStatement(retVal));
 
-            // Solnet.Rpc.Types.Commitment commitment = Commitment.Finalized
+            // Solana.Unity.Rpc.Types.Commitment commitment = Commitment.Finalized
 
             EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.DefaultProgramAddress) ? null : EqualsValueClause(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(idl.DefaultProgramAddress)));
             EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Finalized")));
@@ -1503,7 +1503,7 @@ namespace Solnet.Anchor
             return MethodDeclaration(List<AttributeListSyntax>(),
                        ClientGeneratorDefaultValues.PublicAwaitModifiers,
 
-                       Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solnet"), IdentifierName("Programs")), IdentifierName("Models")),
+                       Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
                        Generic("ProgramAccountsResultWrapper", Generic("List", typeName))))
 
 ,

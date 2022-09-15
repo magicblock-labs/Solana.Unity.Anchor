@@ -1,15 +1,15 @@
 ﻿using Solnet.Anchor.Converters;
 using Solnet.Anchor.Models;
-using Solnet.Rpc;
-using Solnet.Rpc.Utilities;
-using Solnet.Wallet;
+using Solana.Unity.Rpc;
+using Solana.Unity.Rpc.Utilities;
+using Solana.Unity.Wallet;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.IO.Compression;
 using System.Text;
-using Solnet.Programs.Utilities;
+using Solana.Unity.Programs.Utilities;
 
 namespace Solnet.Anchor
 {

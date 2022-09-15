@@ -1,6 +1,6 @@
-using Solnet.Wallet;
-using Solnet.Rpc;
-using Solnet.Programs.Utilities;
+using Solana.Unity.Wallet;
+using Solana.Unity.Rpc;
+using Solana.Unity.Programs.Utilities;
 using System;
 using System.IO;
 using System.IO.Compression;

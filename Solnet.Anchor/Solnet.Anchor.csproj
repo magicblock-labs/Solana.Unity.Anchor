@@ -6,9 +6,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
-		<PackageReference Include="Solnet.Programs" Version="6.0.3" />
+		<PackageReference Include="Solana.Unity.Programs" Version="2.6.0.9" />
+		<PackageReference Include="Solana.Unity.Rpc" Version="2.6.0.9" />
+		<PackageReference Include="Solana.Unity.Wallet" Version="2.6.0.9" />
+		<!-- <PackageReference Include="Solnet.Programs" Version="6.0.3" />
 		<PackageReference Include="Solnet.Rpc" Version="6.0.3" />
-		<PackageReference Include="Solnet.Wallet" Version="6.0.3" />
+		<PackageReference Include="Solnet.Wallet" Version="6.0.3" /> -->
 	</ItemGroup>
 
 	<Import Project="..\SharedBuildProperties.props" />

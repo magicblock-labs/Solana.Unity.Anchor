@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Solnet.Anchor;
-using Solnet.Rpc;
+using Solana.Unity.Rpc;
 using System.IO;
 using Solnet.Anchor.Models;
 
