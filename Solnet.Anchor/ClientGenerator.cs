@@ -1110,13 +1110,20 @@ namespace Solnet.Anchor
             return GenericName(Identifier(generic), TypeArgumentList(SingletonSeparatedList(t)));
         }
 
-        private MemberDeclarationSyntax GenerateSubscribeAccount(IIdlTypeDefinitionTy type)
+        private MemberDeclarationSyntax GenerateSubscribeAccount(IIdlTypeDefinitionTy type, Idl idl)
         {
+            var typeName = type.Name.ToPascalCase();
+            var typeNameClass = typeName;
+            if (typeNameClass == idl.Name.ToPascalCase())
+            {
+                typeNameClass = typeNameClass + ".Accounts." + typeNameClass;
+            }
+            
             var callbackBody =
                 Block(
                     LocalDeclarationStatement(
                         VariableDeclaration(
-                            IdentifierName(type.Name.ToPascalCase()))
+                            IdentifierName(typeNameClass))
                         .WithVariables(
                             SingletonSeparatedList<VariableDeclaratorSyntax>(
                                 VariableDeclarator(
@@ -1148,7 +1155,7 @@ namespace Solnet.Anchor
                                 InvocationExpression(
                                     MemberAccessExpression(
                                         SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName(type.Name.ToPascalCase()),
+                                        IdentifierName(typeNameClass),
                                         IdentifierName("Deserialize")))
                                 .WithArgumentList(
                                     ArgumentList(
@@ -1287,7 +1294,7 @@ namespace Solnet.Anchor
                                                                                 IdentifierName("Models")),
                                                                             IdentifierName("AccountInfo")))))),
                                                         Token(SyntaxKind.CommaToken),
-                                                        IdentifierName(type.Name.ToPascalCase())})))),
+                                                        IdentifierName(typeNameClass)})))),
                                     Token(SyntaxKind.CommaToken),
                                     Parameter(
                                         Identifier("commitment"))
@@ -1309,11 +1316,16 @@ namespace Solnet.Anchor
                     );
         }
 
-        private MemberDeclarationSyntax GenerateGetAccount(IIdlTypeDefinitionTy type)
+        private MemberDeclarationSyntax GenerateGetAccount(IIdlTypeDefinitionTy type, Idl idl)
         {
             List<StatementSyntax> body = new();
 
             var typeName = type.Name.ToPascalCase();
+            var typeNameClass = typeName;
+            if (typeNameClass == idl.Name.ToPascalCase())
+            {
+                typeNameClass = typeNameClass + ".Accounts." + typeNameClass;
+            }
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName("var"),
                 SingletonSeparatedList(VariableDeclarator(Identifier("res"), null, EqualsValueClause(
@@ -1334,7 +1346,7 @@ namespace Solnet.Anchor
 
 
             var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("AccountResultWrapper", typeName)),
+                       Generic("AccountResultWrapper", typeNameClass)),
                        ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
 
             body.Add(IfStatement(condition, ifBody));
@@ -1347,14 +1359,14 @@ namespace Solnet.Anchor
             var convert = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Convert"), IdentifierName("FromBase64String")),
                             ArgumentList(SingletonSeparatedList(Argument(convertArg))));
 
-            var desser = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeName), IdentifierName("Deserialize")),
+            var desser = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeNameClass), IdentifierName("Deserialize")),
                             ArgumentList(SingletonSeparatedList(Argument(convert))));
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName("var"),
                 SingletonSeparatedList(VariableDeclarator(Identifier("resultingAccount"), null, EqualsValueClause(desser))))));
 
             var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("AccountResultWrapper", typeName)), ArgumentList(SeparatedList(new[]
+                       Generic("AccountResultWrapper", typeNameClass)), ArgumentList(SeparatedList(new[]
                        {
                            Argument(IdentifierName("res")),
                            Argument(IdentifierName("resultingAccount"))
@@ -1369,7 +1381,7 @@ namespace Solnet.Anchor
                        ClientGeneratorDefaultValues.PublicAwaitModifiers,
 
                        Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("AccountResultWrapper", typeName)))
+                       Generic("AccountResultWrapper", typeNameClass)))
 
 ,
                        null,
@@ -1390,14 +1402,18 @@ namespace Solnet.Anchor
             List<StatementSyntax> body = new();
 
             var typeName = type.Name.ToPascalCase();
-
+            var typeNameClass = typeName;
+            if (typeNameClass == idl.Name.ToPascalCase())
+            {
+                typeNameClass = typeNameClass + ".Accounts." + typeNameClass;
+            }
             //build memcmp filters
 
             var memCmpType = QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")), IdentifierName("Models")), IdentifierName("MemCmp"));
             var memCmp = ObjectCreationExpression(memCmpType, default,
                     InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList<ExpressionSyntax>(new[]{
                         AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
-                            IdentifierName("Bytes"), QualifiedName(IdentifierName(typeName), IdentifierName("ACCOUNT_DISCRIMINATOR_B58"))),
+                            IdentifierName("Bytes"), QualifiedName(IdentifierName(typeNameClass), IdentifierName("ACCOUNT_DISCRIMINATOR_B58"))),
                         AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
                             IdentifierName("Offset"), LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))) })));
 
@@ -1438,7 +1454,7 @@ namespace Solnet.Anchor
             //new Solana.Unity.Programs.Models.ProgramAccountsResultWrapper<List<Reserve>>(res);
 
             var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("ProgramAccountsResultWrapper", Generic("List", typeName))),
+                       Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))),
                        ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
 
             body.Add(IfStatement(condition, ifBody));
@@ -1457,7 +1473,7 @@ namespace Solnet.Anchor
                                     IdentifierName("res"), IdentifierName("Result")),
                                 IdentifierName("Count"));
 
-            var listType = Generic("List", typeName);
+            var listType = Generic("List", typeNameClass);
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(listType,
                 SingletonSeparatedList(VariableDeclarator(Identifier("resultingAccounts"), default,
@@ -1472,7 +1488,7 @@ namespace Solnet.Anchor
             var convert = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Convert"), IdentifierName("FromBase64String")),
                             ArgumentList(SingletonSeparatedList(Argument(convertArg))));
 
-            var desser = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeName), IdentifierName("Deserialize")),
+            var desser = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeNameClass), IdentifierName("Deserialize")),
                             ArgumentList(SingletonSeparatedList(Argument(convert))));
 
             var lambda = SimpleLambdaExpression(Parameter(Identifier("result")), desser);
@@ -1487,7 +1503,7 @@ namespace Solnet.Anchor
                             ArgumentList(SingletonSeparatedList(Argument(selectCall))))));
 
             var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("ProgramAccountsResultWrapper", Generic("List", typeName))), ArgumentList(SeparatedList(new[]
+                       Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))), ArgumentList(SeparatedList(new[]
                        {
                            Argument(IdentifierName("res")),
                            Argument(IdentifierName("resultingAccounts"))
@@ -1504,7 +1520,7 @@ namespace Solnet.Anchor
                        ClientGeneratorDefaultValues.PublicAwaitModifiers,
 
                        Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("ProgramAccountsResultWrapper", Generic("List", typeName))))
+                       Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))))
 
 ,
                        null,
@@ -1528,12 +1544,12 @@ namespace Solnet.Anchor
         
         private List<MemberDeclarationSyntax> GenerateSubscribeAccount(Idl idl)
         {
-            return idl.Accounts.Select(GenerateSubscribeAccount).ToList();
+            return idl.Accounts.Select(x=>GenerateSubscribeAccount(x, idl)).ToList();
         }
 
         private List<MemberDeclarationSyntax> GenerateGetAccount(Idl idl)
         {
-            return idl.Accounts.Select(GenerateGetAccount).ToList();
+            return idl.Accounts.Select(x=>GenerateGetAccount(x, idl)).ToList();
         }
 
         private MemberDeclarationSyntax GenerateTypesSyntaxTree(Idl idl)
