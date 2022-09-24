@@ -1697,6 +1697,11 @@ namespace Solnet.Anchor
 
             foreach (var field in structIdl.Fields)
             {
+                if (structIdl.Name.ToPascalCase() == field.Name.ToPascalCase())
+                {
+                    field.Name =  field.Name + "Field";
+                }
+
                 classMembers.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier, GetTypeSyntax(field.Type), default, Identifier(field.Name.ToPascalCase()), ClientGeneratorDefaultValues.PropertyAccessorList));
             }
 
@@ -1832,7 +1837,6 @@ namespace Solnet.Anchor
                     Block(desserializationBody),
                     null));
             }
-
             return SingletonList<MemberDeclarationSyntax>(ClassDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicPartialModifiers, Identifier(structIdl.Name.ToPascalCase()), null, null, List<TypeParameterConstraintClauseSyntax>(), List(classMembers)));
         }
 
