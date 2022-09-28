@@ -545,6 +545,11 @@ namespace Solnet.Anchor
 
             if (type is IdlDefined definedType)
             {
+                if (identifierNameSyntax.ToString().Length > 6 && identifierNameSyntax.ToString().Substring(identifierNameSyntax.ToString().Length - 6) == ".Value")
+                {
+                    identifierNameSyntax = IdentifierName(identifierNameSyntax.ToString().Remove(identifierNameSyntax.ToString().Length - 6));
+                }
+
                 if (!IsSimpleEnum(definedTypes, definedType.TypeName))
                 {
                     syntaxes.Add(ExpressionStatement(AssignmentExpression(
@@ -724,9 +729,9 @@ namespace Solnet.Anchor
                     IdentifierName("offset"),
                     LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(1)))));
 
-                if (optionalType.ValuesType is IdlValueType 
-                    || (optionalType.ValuesType is IdlDefined d 
-                        && definedTypes.FirstOrDefault(x => x.Name == d.TypeName) is EnumIdlTypeDefinition e 
+                if (optionalType.ValuesType is IdlValueType
+                    || (optionalType.ValuesType is IdlDefined d
+                        && definedTypes.FirstOrDefault(x => x.Name == d.TypeName) is EnumIdlTypeDefinition e
                         && e.IsPureEnum()))
                 {
                     conditionBody.AddRange(GenerateArgSerializationSyntaxList(
@@ -744,7 +749,7 @@ namespace Solnet.Anchor
                         optionalType.ValuesType,
                         identifierNameSyntax));
                 }
-                
+
 
                 var elseBody = Block(
                     ExpressionStatement(InvocationExpression(
@@ -772,7 +777,6 @@ namespace Solnet.Anchor
             {
                 throw new Exception("Unexpected type " + type.GetType().FullName);
             }
-
             return syntaxes;
         }
 
@@ -899,7 +903,7 @@ namespace Solnet.Anchor
             var className = idl.Name.ToPascalCase() + "Client";
 
             clientMembers.Add(GenerateConstructor(idl, className));
-            
+
             if (idl.Accounts is { Length: > 0 })
             {
                 clientMembers.AddRange(GenerateGetAccounts(idl));
@@ -936,10 +940,12 @@ namespace Solnet.Anchor
             {
                 foreach (var val in idl.Errors)
                 {
-                    var errValue = InitializerExpression(
-                        SyntaxKind.ComplexElementInitializerExpression,
-                        SeparatedList<ExpressionSyntax>(
-                            new SyntaxNodeOrToken[]{
+                    if (val.Msg != null)
+                    {
+                        var errValue = InitializerExpression(
+                            SyntaxKind.ComplexElementInitializerExpression,
+                            SeparatedList<ExpressionSyntax>(
+                                new SyntaxNodeOrToken[]{
                             LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(val.Code)),
                             Token(SyntaxKind.CommaToken),
                             ObjectCreationExpression(
@@ -960,8 +966,9 @@ namespace Solnet.Anchor
                                             LiteralExpression(
                                                 SyntaxKind.StringLiteralExpression,
                                                 Literal(val.Msg)))})), default)}));
-                    syntaxNodeOrTokens = syntaxNodeOrTokens.Add(errValue);
-                    syntaxNodeOrTokens = syntaxNodeOrTokens.Add(Token(SyntaxKind.CommaToken));
+                        syntaxNodeOrTokens = syntaxNodeOrTokens.Add(errValue);
+                        syntaxNodeOrTokens = syntaxNodeOrTokens.Add(Token(SyntaxKind.CommaToken));
+                    }
                 }
             }
 
@@ -1118,7 +1125,7 @@ namespace Solnet.Anchor
             {
                 typeNameClass = typeNameClass + ".Accounts." + typeNameClass;
             }
-            
+
             var callbackBody =
                 Block(
                     LocalDeclarationStatement(
@@ -1239,7 +1246,7 @@ namespace Solnet.Anchor
                                                         Token(SyntaxKind.CommaToken),
                                                         Argument(
                                                             IdentifierName("commitment"))})))))))));
-            
+
 
             var methodDeclaration = MethodDeclaration(
                         GenericName(
@@ -1251,7 +1258,7 @@ namespace Solnet.Anchor
                         Identifier("Subscribe" + type.Name.ToPascalCase() + "Async"))
                     .WithModifiers(
                         TokenList(
-                            new []{
+                            new[]{
                                 Token(SyntaxKind.PublicKeyword),
                                 Token(SyntaxKind.AsyncKeyword)}))
                     .WithParameterList(
@@ -1541,15 +1548,15 @@ namespace Solnet.Anchor
         {
             return idl.Accounts.Select(acc => GenerateGetAccounts(idl, acc)).ToList();
         }
-        
+
         private List<MemberDeclarationSyntax> GenerateSubscribeAccount(Idl idl)
         {
-            return idl.Accounts.Select(x=>GenerateSubscribeAccount(x, idl)).ToList();
+            return idl.Accounts.Select(x => GenerateSubscribeAccount(x, idl)).ToList();
         }
 
         private List<MemberDeclarationSyntax> GenerateGetAccount(Idl idl)
         {
-            return idl.Accounts.Select(x=>GenerateGetAccount(x, idl)).ToList();
+            return idl.Accounts.Select(x => GenerateGetAccount(x, idl)).ToList();
         }
 
         private MemberDeclarationSyntax GenerateTypesSyntaxTree(Idl idl)
@@ -1699,7 +1706,7 @@ namespace Solnet.Anchor
             {
                 if (structIdl.Name.ToPascalCase() == field.Name.ToPascalCase())
                 {
-                    field.Name =  field.Name + "Field";
+                    field.Name = field.Name + "Field";
                 }
 
                 classMembers.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier, GetTypeSyntax(field.Type), default, Identifier(field.Name.ToPascalCase()), ClientGeneratorDefaultValues.PropertyAccessorList));

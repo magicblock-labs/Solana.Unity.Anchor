@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Solana.Unity.Rpc" Version="2.6.0.9" />
 	</ItemGroup>
 

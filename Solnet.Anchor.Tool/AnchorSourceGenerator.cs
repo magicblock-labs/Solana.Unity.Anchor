@@ -10,6 +10,8 @@ using Solnet.Anchor;
 using Solana.Unity.Rpc;
 using System.IO;
 using Solnet.Anchor.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class AnchorSourceGenerator
 {
@@ -21,7 +23,7 @@ public class AnchorSourceGenerator
             {
                 string idlStr;
 
-                if(opts.File != null)
+                if (opts.File != null)
                 {
                     idlStr = File.ReadAllText(opts.File);
                 }
@@ -30,20 +32,54 @@ public class AnchorSourceGenerator
                     idlStr = IdlRetriever.GetIdl(new(opts.Address), GetRpcClient(opts.Network));
                 }
 
-                if(idlStr == null)
+                if (idlStr == null)
                 {
                     Console.WriteLine("Unable to read IDL from specified source. exiting");
                     return -2;
                 }
 
-                if(opts.Json != null)
+                if (opts.Json != null)
                 {
                     File.WriteAllText(opts.Json, idlStr);
                 }
 
-                Idl idl = IdlParser.Parse(idlStr);
+                var jsonParsed = JObject.Parse(idlStr);
+
+                // Set UnixTimestamp to Int64 in accounts
+                foreach (JToken account in (JArray)jsonParsed["accounts"])
+                {
+                    JToken accountType = account["type"];
+                    foreach (JObject fields in (JArray)accountType["fields"])
+                    {
+                        if (fields["type"] != null && fields["type"].Type.ToString() == "Object" && fields["type"]["defined"] != null && fields["type"]["defined"].ToString() == "UnixTimestamp")
+                        {
+                            fields["type"].Replace("i64");
+                        }
+                    }
+                }
+
+                // Set UnixTimestamp to Int64 in accounts
+                foreach (JObject instruction in (JArray)jsonParsed["instructions"])
+                {
+                    if ((JArray)instruction["args"] != null)
+                    {
+                        foreach (JObject arg in (JArray)instruction["args"])
+                        {
+                            var argType = arg["type"];
+                            if (argType.Type.ToString() == "Object" && argType != null)
+                            {
+                                if (argType["defined"] != null && argType["defined"].ToString() == "UnixTimestamp")
+                                {
+                                    argType.Replace("i64");
+                                }
+                            }
+                        }
+                    }
+                }
                 
-                if(idl == null)
+                Idl idl = IdlParser.Parse(idlStr);
+
+                if (idl == null)
                 {
                     Console.WriteLine("No IDL was generated. exiting");
                     return -3;
@@ -57,7 +93,7 @@ public class AnchorSourceGenerator
 
                 Console.WriteLine(idl.NamePascalCase);
 
-                if(!string.IsNullOrWhiteSpace(opts.Out))
+                if (!string.IsNullOrWhiteSpace(opts.Out))
                     File.WriteAllText(opts.Out, code);
 
                 if (opts.StdOut)
@@ -69,11 +105,12 @@ public class AnchorSourceGenerator
             {
                 if (!errors.Any(x => x is HelpRequestedError or VersionRequestedError or HelpVerbRequestedError)) return -1; // Invalid arguments
                 return 0;
-            }); 
+            });
     }
 
     public static IRpcClient GetRpcClient(Network network)
-    => network switch {
+    => network switch
+    {
         Network.Devnet => ClientFactory.GetClient(Cluster.DevNet),
         Network.Testnet => ClientFactory.GetClient(Cluster.TestNet),
         _ => ClientFactory.GetClient(Cluster.MainNet)
@@ -92,7 +129,7 @@ public class CommandLineOptions
     [Option('a', "address", Group = "source", HelpText = "Anchor Program Address")]
     public string Address { get; set; }
 
-    [Option('n', " network", Group = "source", 
+    [Option('n', " network", Group = "source",
             HelpText = "Network to fetch address based IDL, default: mainnet (mainnet, devnet, testnet)",
             Default = Network.Mainnet)]
     public Network Network { get; set; }

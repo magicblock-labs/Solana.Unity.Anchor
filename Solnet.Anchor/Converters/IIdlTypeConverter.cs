@@ -25,6 +25,7 @@ namespace Solnet.Anchor.Converters
                     "publicKey" => new IdlPublicKey(),
                     "bytes" => new IdlArray() { ValuesType = new IdlValueType() { TypeName = "u8" } },
                     "u128" or "i128" => new IdlBigInt() { TypeName = typeName },
+                    "UnixTimestamp" => new UnixTimestamp(),
                     _ => new IdlValueType() { TypeName = typeName }
                 };
             }
@@ -39,10 +40,9 @@ namespace Solnet.Anchor.Converters
                 {
                     reader.Read();
                     if (reader.TokenType != JsonTokenType.String) throw new JsonException("Unexpected error value.");
-
                     string definedTypeName = reader.GetString();
+                    
                     reader.Read();
-
                     return new IdlDefined() { TypeName = definedTypeName };
                 }
                 else if ("option" == typeName)
@@ -66,6 +66,7 @@ namespace Solnet.Anchor.Converters
                     reader.Read();
                     IIdlType innerType = Read(ref reader, typeToConvert, options);
                     IIdlType idlType;
+                    System.Console.WriteLine(typeName);
 
 
                     if ("array" == typeName)
