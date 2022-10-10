@@ -58,7 +58,7 @@ public class AnchorSourceGenerator
                     }
                 }
 
-                // Set UnixTimestamp to Int64 in accounts
+                // Set UnixTimestamp to Int64 in instructions
                 foreach (JObject instruction in (JArray)jsonParsed["instructions"])
                 {
                     if ((JArray)instruction["args"] != null)
@@ -77,7 +77,7 @@ public class AnchorSourceGenerator
                     }
                 }
                 
-                Idl idl = IdlParser.Parse(idlStr);
+                Idl idl = IdlParser.Parse(jsonParsed.ToString());
 
                 if (idl == null)
                 {
