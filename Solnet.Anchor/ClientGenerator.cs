@@ -395,6 +395,26 @@ namespace Solnet.Anchor
                         syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, identifierNameSyntax, IdentifierName(tmpName))));
                         break;
                     }
+                case IdlTuple tup:
+                    {
+                        syntaxes.Add(ExpressionStatement(AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        identifierNameSyntax,
+                        InvocationExpression(MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName("_data"),
+                                IdentifierName("GetU32")),
+                            ArgumentList(SeparatedList(new ArgumentSyntax[]
+                            {
+                                Argument(IdentifierName("offset"))
+                            }))))));
+
+                    syntaxes.Add(ExpressionStatement(AssignmentExpression(
+                        SyntaxKind.AddAssignmentExpression,
+                        IdentifierName("offset"),
+                        LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(4)))));
+                    break;
+                    }
                 case IdlArray arr:
                     {
                         SyntaxToken lenIdentifier = Identifier(identifierNameSyntax.ToString().ToCamelCase().Replace(".", null).Replace("[", null).Replace("]", null) + "Length");
@@ -1634,6 +1654,7 @@ namespace Solnet.Anchor
         private TypeSyntax GetTypeSyntax(IIdlType type)
             => type switch
             {
+                IdlTuple tup => TupleType(SetTupleSyntax(tup.ValuesType)),
                 IdlArray arr => ArrayType(GetTypeSyntax(arr.ValuesType), SingletonList(ArrayRankSpecifier())),
                 IdlBigInt => IdentifierName("BigInteger"),
                 IdlDefined def => IdentifierName(def.TypeName),
@@ -1647,6 +1668,14 @@ namespace Solnet.Anchor
                 IdlValueType v => PredefinedType(Token(GetTokenForValueType(v))),
                 _ => throw new Exception("Unexpected Type.")
             };
+        
+        private SeparatedSyntaxList<TupleElementSyntax> SetTupleSyntax(IIdlType[] typeList){
+            var tupletype = new SeparatedSyntaxList<TupleElementSyntax>();
+            foreach (var type in typeList) {    
+                tupletype.Add(TupleElement(GetTypeSyntax(type)));
+            }
+            return tupletype;
+        }
 
         private SyntaxKind GetTokenForValueType(IdlValueType idlValueType)
             => idlValueType.TypeName switch

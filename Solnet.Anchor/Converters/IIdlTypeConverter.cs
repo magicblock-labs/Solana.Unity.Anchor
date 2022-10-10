@@ -59,6 +59,14 @@ namespace Solnet.Anchor.Converters
                     reader.Read();
                     return new IdlArray() { ValuesType = innerType };
                 }
+                else if ("tuple" == typeName || "bTreeMap" == typeName)
+                {
+                    reader.Read();
+                    IIdlTypeArrayConverter idlTypeArrayConverter = new();
+                    IIdlType[] innerType = idlTypeArrayConverter.Read(ref reader, typeToConvert, options);
+                    reader.Read();
+                    return new IdlTuple() { ValuesType = innerType };
+                }
                 else
                 {
                     reader.Read();
@@ -66,8 +74,6 @@ namespace Solnet.Anchor.Converters
                     reader.Read();
                     IIdlType innerType = Read(ref reader, typeToConvert, options);
                     IIdlType idlType;
-                    System.Console.WriteLine(typeName);
-
 
                     if ("array" == typeName)
                     {
