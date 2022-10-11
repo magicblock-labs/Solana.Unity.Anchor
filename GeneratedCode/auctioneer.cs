@@ -53,9 +53,9 @@ namespace Auctioneer
             public static string ACCOUNT_DISCRIMINATOR_B58 => "Xjm7kw3Unhx";
             public ListingConfigVersion Version { get; set; }
 
-            public UnixTimestamp StartTime { get; set; }
+            public long StartTime { get; set; }
 
-            public UnixTimestamp EndTime { get; set; }
+            public long EndTime { get; set; }
 
             public Bid HighestBid { get; set; }
 
@@ -84,10 +84,10 @@ namespace Auctioneer
                 ListingConfig result = new ListingConfig();
                 result.Version = (ListingConfigVersion)_data.GetU8(offset);
                 offset += 1;
-                offset += UnixTimestamp.Deserialize(_data, offset, out var resultStartTime);
-                result.StartTime = resultStartTime;
-                offset += UnixTimestamp.Deserialize(_data, offset, out var resultEndTime);
-                result.EndTime = resultEndTime;
+                result.StartTime = _data.GetS64(offset);
+                offset += 8;
+                result.EndTime = _data.GetS64(offset);
+                offset += 8;
                 offset += Bid.Deserialize(_data, offset, out var resultHighestBid);
                 result.HighestBid = resultHighestBid;
                 result.Bump = _data.GetU8(offset);
@@ -266,7 +266,7 @@ namespace Auctioneer
             return await SignAndSendTransaction(instr, feePayer, signingCallback);
         }
 
-        public async Task<RequestResult<string>> SendSellAsync(SellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, byte auctioneerAuthorityBump, ulong tokenSize, UnixTimestamp startTime, UnixTimestamp endTime, ulong? reservePrice, ulong? minBidIncrement, uint? timeExtPeriod, uint? timeExtDelta, bool? allowHighBidCancel, PublicKey feePayer, Func<byte[], PublicKey, byte[]> signingCallback, PublicKey programId)
+        public async Task<RequestResult<string>> SendSellAsync(SellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, byte auctioneerAuthorityBump, ulong tokenSize, long startTime, long endTime, ulong? reservePrice, ulong? minBidIncrement, uint? timeExtPeriod, uint? timeExtDelta, bool? allowHighBidCancel, PublicKey feePayer, Func<byte[], PublicKey, byte[]> signingCallback, PublicKey programId)
         {
             Solana.Unity.Rpc.Models.TransactionInstruction instr = Program.AuctioneerProgram.Sell(accounts, tradeStateBump, freeTradeStateBump, programAsSignerBump, auctioneerAuthorityBump, tokenSize, startTime, endTime, reservePrice, minBidIncrement, timeExtPeriod, timeExtDelta, allowHighBidCancel, programId);
             return await SignAndSendTransaction(instr, feePayer, signingCallback);
@@ -614,7 +614,7 @@ namespace Auctioneer
                 return new Solana.Unity.Rpc.Models.TransactionInstruction{Keys = keys, ProgramId = programId.KeyBytes, Data = resultData};
             }
 
-            public static Solana.Unity.Rpc.Models.TransactionInstruction Sell(SellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, byte auctioneerAuthorityBump, ulong tokenSize, UnixTimestamp startTime, UnixTimestamp endTime, ulong? reservePrice, ulong? minBidIncrement, uint? timeExtPeriod, uint? timeExtDelta, bool? allowHighBidCancel, PublicKey programId)
+            public static Solana.Unity.Rpc.Models.TransactionInstruction Sell(SellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, byte auctioneerAuthorityBump, ulong tokenSize, long startTime, long endTime, ulong? reservePrice, ulong? minBidIncrement, uint? timeExtPeriod, uint? timeExtDelta, bool? allowHighBidCancel, PublicKey programId)
             {
                 List<Solana.Unity.Rpc.Models.AccountMeta> keys = new()
                 {Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouseProgram, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.ListingConfig, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.Wallet, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.SellerTradeState, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.FreeSellerTradeState, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
@@ -632,8 +632,10 @@ namespace Auctioneer
                 offset += 1;
                 _data.WriteU64(tokenSize, offset);
                 offset += 8;
-                offset += startTime.Serialize(_data, offset);
-                offset += endTime.Serialize(_data, offset);
+                _data.WriteS64(startTime, offset);
+                offset += 8;
+                _data.WriteS64(endTime, offset);
+                offset += 8;
                 if (reservePrice != null)
                 {
                     _data.WriteU8(1, offset);
