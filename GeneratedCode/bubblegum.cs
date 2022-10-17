@@ -16,7 +16,6 @@ using Bubblegum;
 using Bubblegum.Program;
 using Bubblegum.Errors;
 using Bubblegum.Accounts;
-using Bubblegum.Events;
 using Bubblegum.Types;
 
 namespace Bubblegum
@@ -123,10 +122,6 @@ namespace Bubblegum
             UpdateAuthorityIncorrect = 6024U,
             LeafAuthorityMustSign = 6025U
         }
-    }
-
-    namespace Events
-    {
     }
 
     namespace Types
@@ -772,6 +767,8 @@ namespace Bubblegum
 
             public PublicKey CollectionAuthority { get; set; }
 
+            public PublicKey CollectionAuthorityRecordPda { get; set; }
+
             public PublicKey CollectionMint { get; set; }
 
             public PublicKey CollectionMetadata { get; set; }
@@ -803,6 +800,8 @@ namespace Bubblegum
 
             public PublicKey CollectionAuthority { get; set; }
 
+            public PublicKey CollectionAuthorityRecordPda { get; set; }
+
             public PublicKey CollectionMint { get; set; }
 
             public PublicKey CollectionMetadata { get; set; }
@@ -833,6 +832,8 @@ namespace Bubblegum
             public PublicKey TreeDelegate { get; set; }
 
             public PublicKey CollectionAuthority { get; set; }
+
+            public PublicKey CollectionAuthorityRecordPda { get; set; }
 
             public PublicKey CollectionMint { get; set; }
 
@@ -957,6 +958,8 @@ namespace Bubblegum
             public PublicKey TokenProgram { get; set; }
 
             public PublicKey AssociatedTokenProgram { get; set; }
+
+            public PublicKey LogWrapper { get; set; }
         }
 
         public class CompressAccounts
@@ -1087,7 +1090,7 @@ namespace Bubblegum
             public static Solana.Unity.Rpc.Models.TransactionInstruction VerifyCollection(VerifyCollectionAccounts accounts, byte[] root, byte[] dataHash, byte[] creatorHash, ulong nonce, uint index, MetadataArgs message, PublicKey programId)
             {
                 List<Solana.Unity.Rpc.Models.AccountMeta> keys = new()
-                {Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafOwner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MerkleTree, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Payer, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthority, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMetadata, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.EditionAccount, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.BubblegumSigner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LogWrapper, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CompressionProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false)};
+                {Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafOwner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MerkleTree, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Payer, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthority, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthorityRecordPda, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMetadata, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.EditionAccount, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.BubblegumSigner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LogWrapper, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CompressionProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false)};
                 byte[] _data = new byte[1200];
                 int offset = 0;
                 _data.WriteU64(12212134156261749048UL, offset);
@@ -1111,7 +1114,7 @@ namespace Bubblegum
             public static Solana.Unity.Rpc.Models.TransactionInstruction UnverifyCollection(UnverifyCollectionAccounts accounts, byte[] root, byte[] dataHash, byte[] creatorHash, ulong nonce, uint index, MetadataArgs message, PublicKey programId)
             {
                 List<Solana.Unity.Rpc.Models.AccountMeta> keys = new()
-                {Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafOwner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MerkleTree, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Payer, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthority, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMetadata, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.EditionAccount, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.BubblegumSigner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LogWrapper, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CompressionProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false)};
+                {Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafOwner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MerkleTree, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Payer, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthority, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthorityRecordPda, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMetadata, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.EditionAccount, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.BubblegumSigner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LogWrapper, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CompressionProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false)};
                 byte[] _data = new byte[1200];
                 int offset = 0;
                 _data.WriteU64(12158180955007941626UL, offset);
@@ -1135,7 +1138,7 @@ namespace Bubblegum
             public static Solana.Unity.Rpc.Models.TransactionInstruction SetAndVerifyCollection(SetAndVerifyCollectionAccounts accounts, byte[] root, byte[] dataHash, byte[] creatorHash, ulong nonce, uint index, MetadataArgs message, byte[] collection, PublicKey programId)
             {
                 List<Solana.Unity.Rpc.Models.AccountMeta> keys = new()
-                {Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafOwner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MerkleTree, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Payer, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthority, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMetadata, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.EditionAccount, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.BubblegumSigner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LogWrapper, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CompressionProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false)};
+                {Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafOwner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LeafDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MerkleTree, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.Payer, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TreeDelegate, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthority, true), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionAuthorityRecordPda, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CollectionMetadata, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.EditionAccount, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.BubblegumSigner, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LogWrapper, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.CompressionProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false)};
                 byte[] _data = new byte[1200];
                 int offset = 0;
                 _data.WriteU64(16912400468640658155UL, offset);
@@ -1268,7 +1271,7 @@ namespace Bubblegum
             public static Solana.Unity.Rpc.Models.TransactionInstruction DecompressV1(DecompressV1Accounts accounts, MetadataArgs metadata, PublicKey programId)
             {
                 List<Solana.Unity.Rpc.Models.AccountMeta> keys = new()
-                {Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.Voucher, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.LeafOwner, true), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.Mint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.MintAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.Metadata, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MasterEdition, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.SysvarRent, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.AssociatedTokenProgram, false)};
+                {Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.Voucher, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.LeafOwner, true), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.Mint, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.MintAuthority, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.Metadata, false), Solana.Unity.Rpc.Models.AccountMeta.Writable(accounts.MasterEdition, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.SysvarRent, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMetadataProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.AssociatedTokenProgram, false), Solana.Unity.Rpc.Models.AccountMeta.ReadOnly(accounts.LogWrapper, false)};
                 byte[] _data = new byte[1200];
                 int offset = 0;
                 _data.WriteU64(5883102871591605558UL, offset);
