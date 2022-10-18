@@ -39,6 +39,26 @@ namespace Solnet.Anchor.Converters
                 if (reader.TokenType != JsonTokenType.PropertyName) throw new JsonException("Unexpected error value.");
 
                 propertyName = reader.GetString();
+                if("docs" == propertyName)
+                {
+                    reader.Read();
+                    if (reader.TokenType != JsonTokenType.StartArray) throw new JsonException("Unexpected error value.");
+
+                    reader.Read();
+                    if (reader.TokenType != JsonTokenType.String) throw new JsonException("Unexpected error value.");
+
+                    reader.Read();
+
+                    while(reader.TokenType == JsonTokenType.String)
+                    {
+                        reader.Read();
+                    }
+                    reader.Read();
+                    if (reader.TokenType != JsonTokenType.PropertyName) throw new JsonException("Unexpected error value.");
+
+                    propertyName = reader.GetString();
+                }
+
                 if ("type" != propertyName) throw new JsonException("Unexpected error value.");
 
                 reader.Read();
