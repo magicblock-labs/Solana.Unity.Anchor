@@ -1,16 +1,16 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/bmresearch/Solnet.Anchor/master/assets/icon.png" margin="auto" height="175"/>
+    <img src="https://raw.githubusercontent.com/garbles-labs/Solana.Unity.Anchor/master/assets/icon.png" margin="auto" height="175"/>
 </p>
 
 <p align="center">
-    <a href="https://github.com/bmresearch/Solnet.Anchor/actions/workflows/dotnet.yml">
-        <img src="https://github.com/bmresearch/Solnet.Anchor/actions/workflows/dotnet.yml/badge.svg"
+    <a href="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml">
+        <img src="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml/badge.svg"
             alt="Build" ></a>
-    <a href="https://github.com/bmresearch/Solnet.Anchor/actions/workflows/publish.yml">
-       <img src="https://github.com/bmresearch/Solnet.Anchor/actions/workflows/publish.yml/badge.svg" 
+    <a href="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/publish.yml">
+       <img src="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/publish.yml/badge.svg" 
             alt="Release"></a>
     <a href="">
-        <img src="https://img.shields.io/github/license/bmresearch/Solnet?style=flat-square"
+        <img src="https://img.shields.io/github/license/garbles-labs/Solana.Unity-Core?style=flat-square"
             alt="Code License"></a>
     <a href="https://discord.gg/cReXaBReZt">
        <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
@@ -21,9 +21,11 @@
 
 <p>
 
-# Solnet.Anchor
+# Solana.Unity.Anchor
 
-Solnet.Anchor is a set of tools to generate C# code to interact with Solana Anchor programs.
+Solana.Unity.Anchor is a fork of Solnet.Anchor that generates code compatible with Unity dotnet standard 2.1.
+
+Solana.Unity.Anchor rely on [Solana.Unity-Core](https://github.com/bmresearch/Solnet.Anchor) libraries
 
 ## Features
 
@@ -49,7 +51,7 @@ To compile this project:
 
 To use the generator tool:
 
-- `dotnet tool install Solnet.Anchor.Tool` (if you use `-g` option, you won't need to do this for every project')
+- `dotnet tool install Solana.Unity.Anchor.Tool` (if you use `-g` option, you won't need to do this for every project')
 - `dotnet anchorgen -i idl/file.json -o src/ProgramCode.cs`  
    - You can generate from a live program that uploaded its idl using flag `-a`, or add the default program address if used alongside `-i`
    - You stdout output is supported using `-s` flag

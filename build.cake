@@ -15,7 +15,7 @@ var coverageFileName = "results.info";
 var coverageFilePath = Directory(coverageFolder) + File(coverageFileName);
 var packagesDir = artifactsDir.Combine(Directory("packages"));
 
-var deliverables = new[] {"Solnet.Anchor.Tool", "Solnet.Anchor.SourceGenerator"};
+var deliverables = new[] {"Solana.Unity.Anchor.Tool", "Solana.Unity.Anchor.SourceGenerator"};
 
 Task("Clean")
     .Does(() => {
