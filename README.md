@@ -25,7 +25,7 @@
 
 Solana.Unity.Anchor is a fork of Solnet.Anchor that generates code compatible with Unity dotnet standard 2.1.
 
-Solana.Unity.Anchor rely on [Solana.Unity-Core](https://github.com/bmresearch/Solnet.Anchor) libraries
+Solana.Unity.Anchor rely on [Solana.Unity-Core](https://github.com/garbles-labs/Solana.Unity-Core) libraries and can be used with the [Solana.Unity-SDK](https://github.com/garbles-labs/Solana.Unity-SDK)
 
 ## Features
 
