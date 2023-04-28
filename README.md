@@ -3,14 +3,14 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml">
-        <img src="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml/badge.svg"
+    <a href="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml">
+        <img src="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml/badge.svg"
             alt="Build" ></a>
-    <a href="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/publish.yml">
-       <img src="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/publish.yml/badge.svg" 
+    <a href="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/publish.yml">
+       <img src="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/publish.yml/badge.svg" 
             alt="Release"></a>
     <a href="">
-        <img src="https://img.shields.io/github/license/garbles-labs/Solana.Unity-Core?style=flat-square"
+        <img src="https://img.shields.io/github/license/magicblock-labs/Solana.Unity-Core?style=flat-square"
             alt="Code License"></a>
     <a href="https://discord.gg/cReXaBReZt">
        <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
