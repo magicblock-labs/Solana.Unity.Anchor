@@ -38,7 +38,8 @@
         {
           "name": "sequenceAccount",
           "isMut": true,
-          "isSigner": false
+          "isSigner": false,
+          "isOptional": true
         },
         {
           "name": "authority",

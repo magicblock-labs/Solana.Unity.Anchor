@@ -1,18 +1,18 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/garbles-labs/Solana.Unity.Anchor/master/assets/icon.png" margin="auto" height="175"/>
+    <img src="https://raw.githubusercontent.com/magicblock-labs/Solana.Unity.Anchor/master/assets/icon.png" margin="auto" height="175"/>
 </p>
 
 <p align="center">
-    <a href="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml">
-        <img src="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml/badge.svg"
+    <a href="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml">
+        <img src="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/dotnet.yml/badge.svg"
             alt="Build" ></a>
-    <a href="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/publish.yml">
-       <img src="https://github.com/garbles-labs/Solana.Unity.Anchor/actions/workflows/publish.yml/badge.svg" 
+    <a href="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/publish.yml">
+       <img src="https://github.com/magicblock-labs/Solana.Unity.Anchor/actions/workflows/publish.yml/badge.svg" 
             alt="Release"></a>
     <a href="">
-        <img src="https://img.shields.io/github/license/garbles-labs/Solana.Unity-Core?style=flat-square"
+        <img src="https://img.shields.io/github/license/magicblock-labs/Solana.Unity-Core?style=flat-square"
             alt="Code License"></a>
-    <a href="https://discord.gg/cReXaBReZt">
+    <a href="https://discord.com/invite/MBkdC3gxcv">
        <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
             alt="Join the discussion!"></a>
 </p>
@@ -30,18 +30,16 @@ Solana.Unity.Anchor rely on [Solana.Unity-Core](https://github.com/bmresearch/So
 ## Features
 
 This repo contains 3 main projects:
-- Solnet.Anchor: IDL parsing and code generation
-- Solnet.Anchor.Tool: dotnet tool executable that interfaces with the project above.
-- Solnet.Anchor.SourceGenerator: Roslyn source generator that depends on the tool above to automatically generate code from IDL in your IDE.
+- Solana.Unity.Anchor: IDL parsing and code generation
+- Solana.Unity.Anchor.Tool: dotnet tool executable that interfaces with the project above.
+- Solana.Unity.Anchor.SourceGenerator: Roslyn source generator that depends on the tool above to automatically generate code from IDL in your IDE.
 
 Currently covers all of IDL features with the exception of events and seeds.
 
 ## Requirements
 
-Solnet.Anchor and Solnet.Anchor.Tool are compiled and run in net6. Could be easily backported to net5.
-Solnet.Anchor.SourceGenerator is compiled in netstandard2.1 to be able to be used as a Roslyn Source Generator. However, machine needs net6 as it just calls Solnet.Anchor.Tool that requires net6.
-
-Generated code can be run using net5 or net6, and the respective Solnet version >=5.0.3 or >=6.0.3 libraries.
+Solana.Unity.Anchor and Solana.Unity.Anchor.Tool are compiled and run in net6. Could be easily backported to net5.
+Solana.Unity.Anchor.SourceGenerator is compiled in netstandard2.1 to be able to be used as a Roslyn Source Generator. However, machine needs net6 as it just calls Solnet.Anchor.Tool that requires net6.
 
 ## Instructions
 
@@ -74,7 +72,11 @@ Consider supporting us:
 
 We encourage everyone to contribute, submit issues, PRs, discuss. Every kind of help is welcome.
 
-## Maintainers
+## Solana.Unity Maintainers
+
+* **Gabriele Picco** - [PiccoGabriele](https://github.com/PiccoGabriele)
+
+## Solnet Maintainers
 
 * **Hugo** - [murlokito](https://github.com/murlokito)
 * **Tiago** - [tiago](https://github.com/tiago18c)

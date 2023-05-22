@@ -13,6 +13,8 @@ namespace Solana.Unity.Anchor.Models.Accounts
         public bool IsMut { get; set; }
 
         public bool IsSigner { get; set; }
+        
+        public bool IsOptional { get; set; }
 
         public IdlPda Pda { get; set; }
 

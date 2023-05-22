@@ -1,10 +1,4 @@
-using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Solana.Unity.Anchor;
-using System.Collections.Generic;
-using System;
-using System.Buffers.Binary;
-using System.Numerics;
 
 namespace Solana.Unity.Anchor.Test
 {
@@ -18,14 +12,13 @@ namespace Solana.Unity.Anchor.Test
             var res = IdlParser.ParseFile("Resources/seq.json");
             Assert.IsNotNull(res);
 
-
-
-
             ClientGenerator c = new();
 
             c.GenerateSyntaxTree(res);
+            Assert.IsNotNull(c);
 
-
+            var code = c.GenerateCode(res);
+            Assert.IsNotNull(code);
         }
     }
 }
