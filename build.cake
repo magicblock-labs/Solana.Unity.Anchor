@@ -8,11 +8,6 @@ var configuration = Argument("configuration", "Release");
 var solutionFolder = "./";
 var artifactsDir = MakeAbsolute(Directory("artifacts"));
 
-var reportTypes = "HtmlInline";
-var coverageFolder = "./code_coverage";
-var coverageFileName = "results.info";
-
-var coverageFilePath = Directory(coverageFolder) + File(coverageFileName);
 var packagesDir = artifactsDir.Combine(Directory("packages"));
 
 var deliverables = new[] {"Solana.Unity.Anchor.Tool", "Solana.Unity.Anchor.SourceGenerator"};
@@ -20,7 +15,6 @@ var deliverables = new[] {"Solana.Unity.Anchor.Tool", "Solana.Unity.Anchor.Sourc
 Task("Clean")
     .Does(() => {
         CleanDirectory(artifactsDir);
-        CleanDirectory(coverageFolder);
     });
 
 Task("Restore")
