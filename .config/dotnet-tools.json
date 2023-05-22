@@ -13,6 +13,12 @@
       "commands": [
         "dotnet-format"
       ]
+    },
+    "solana.unity.anchor.tool": {
+      "version": "0.2.8",
+      "commands": [
+        "dotnet-anchorgen"
+      ]
     }
   }
 }

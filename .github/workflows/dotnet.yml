@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get the sources
-        uses: actions/checkout@v1
-      - name: Run the build script
-        uses: cake-build/cake-action@v1
-        with:
-          script-path: build.cake
-          target: Pack
-          cake-bootstrap: true
+        uses: actions/checkout@v2
+      - name: Run cake
+        shell: bash
+        run: |
+          dotnet tool install Cake.Tool --version 1.1.0
+          dotnet tool restore
+          dotnet cake --target=Test --verbosity=verbose

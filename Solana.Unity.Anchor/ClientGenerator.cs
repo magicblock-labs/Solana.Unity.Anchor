@@ -156,8 +156,7 @@ namespace Solana.Unity.Anchor
                 }
                 else if (acc is IdlAccount singleAcc)
                 {
-
-
+                    
                     initExpressions.Add(InvocationExpression(
                         MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
@@ -167,10 +166,29 @@ namespace Solana.Unity.Anchor
                         IdentifierName(singleAcc.IsMut ? "Writable" : "ReadOnly")),
                     ArgumentList(SeparatedList(new ArgumentSyntax[]
                     {
-                        Argument(MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            identifierNameSyntax,
-                            IdentifierName(singleAcc.Name.ToPascalCase()))),
+                        Argument(
+                            singleAcc.IsOptional ?
+                            ConditionalExpression(
+                        BinaryExpression(
+                                    SyntaxKind.EqualsExpression,
+                                    MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        identifierNameSyntax,
+                                        IdentifierName(singleAcc.Name.ToPascalCase())),
+                                    LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                    ), 
+                        
+                        IdentifierName("programId"), 
+                        MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                identifierNameSyntax,
+                                IdentifierName(singleAcc.Name.ToPascalCase()))
+                            ) : 
+                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, 
+                                identifierNameSyntax, 
+                                IdentifierName(singleAcc.Name.ToPascalCase())
+                                )
+                        ),
                         Argument(LiteralExpression(singleAcc.IsSigner ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression))
                     }))));
 
