@@ -2,11 +2,24 @@
 #addin nuget:?package=Cake.Coverlet&version=2.5.4
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=4.8.7
 
+var testProjectsRelativePaths = new string[]
+{
+    "./Solana.Unity.Anchor.Test/Solana.Unity.Anchor.Test.csproj",
+};
+
 
 var target = Argument("target", "Pack");
 var configuration = Argument("configuration", "Release");
 var solutionFolder = "./";
 var artifactsDir = MakeAbsolute(Directory("artifacts"));
+
+var reportTypes = "HtmlInline";
+var coverageFolder = "./code_coverage";
+var coverageFolderIntegration = "./code_coverage_integration";
+
+var coberturaFileName = "results";
+var coverageFilePath = Directory(coverageFolder) + File(coberturaFileName + ".info");
+var jsonFilePath = Directory(coverageFolder) + File(coberturaFileName + ".json");
 
 var packagesDir = artifactsDir.Combine(Directory("packages"));
 
@@ -34,7 +47,36 @@ Task("Build")
     });
 
 
+Task("Test")
+    .IsDependentOn("Build")
+    .Does(() => {
+    
+        var coverletSettings = new CoverletSettings {
+            CollectCoverage = true,
+            CoverletOutputDirectory = coverageFolder,
+            CoverletOutputName = coberturaFileName
+        };
 
+        var testSettings = new DotNetCoreTestSettings
+        {
+            NoRestore = true,
+            Configuration = configuration,
+            NoBuild = true,
+            ArgumentCustomization = args => args.Append($"--logger trx")
+        };
+
+        DotNetCoreTest(testProjectsRelativePaths[0], testSettings, coverletSettings);
+
+        coverletSettings.MergeWithFile = jsonFilePath;
+        for (int i = 1; i < testProjectsRelativePaths.Length; i++)
+        {
+            if (i == testProjectsRelativePaths.Length - 1)
+            {
+                coverletSettings.CoverletOutputFormat = CoverletOutputFormat.lcov;
+            }
+            DotNetCoreTest(testProjectsRelativePaths[i], testSettings, coverletSettings);
+        }
+    });
 
 Task("Publish")
     .IsDependentOn("Build")
