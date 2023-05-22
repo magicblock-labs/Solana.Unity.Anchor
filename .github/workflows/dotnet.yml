@@ -17,4 +17,4 @@ jobs:
         run: |
           dotnet tool install Cake.Tool --version 1.1.0
           dotnet tool restore
-          dotnet cake --target=Report --verbosity=verbose
+          dotnet cake --target=Test --verbosity=verbose
