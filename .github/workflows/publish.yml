@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Get the sources
         uses: actions/checkout@v4
-      - name: Test and Pack
+      - name: build, pack & publish
         shell: bash
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
@@ -19,36 +19,6 @@ jobs:
           dotnet tool install Cake.Tool --version 1.1.0
           dotnet tool restore
           dotnet cake --target=Pack --verbosity=verbose
-      - name: Publish Solana.Unity.Anchor
-        uses: Rebel028/publish-nuget@v2.8.0
-        with:
-          PROJECT_FILE_PATH: Solana.Unity.Anchor/Solana.Unity.Anchor.csproj
-          PACKAGE_NAME: Solana.Unity.Anchor
-          VERSION_FILE_PATH: SharedBuildProperties.props
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org/v3/index.json
-          INCLUDE_SYMBOLS: true
-      - name: Publish Solana.Unity.Anchor.Tool
-        uses: Rebel028/publish-nuget@v2.8.0
-        with:
-          PROJECT_FILE_PATH: Solana.Unity.Anchor.Tool/Solana.Unity.Anchor.Tool.csproj
-          PACKAGE_NAME: Solana.Unity.Anchor.Tool
-          VERSION_FILE_PATH: SharedBuildProperties.props
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org/v3/index.json
-          INCLUDE_SYMBOLS: true
-      - name: Publish Solana.Unity.Anchor.SourceGenerator
-        uses: Rebel028/publish-nuget@v2.8.0
-        with:
-          PROJECT_FILE_PATH: Solana.Unity.Anchor.SourceGenerator/Solana.Unity.Anchor.SourceGenerator.csproj
-          PACKAGE_NAME: Solana.Unity.Anchor.SourceGenerator
-          VERSION_FILE_PATH: SharedBuildProperties.props
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          NUGET_SOURCE: https://api.nuget.org/v3/index.json
-          INCLUDE_SYMBOLS: true
+          dotnet nuget push Solana.Unity.Anchor/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+          dotnet nuget push Solana.Unity.Anchor.Tool/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+          dotnet nuget push Solana.Unity.Anchor.SourceGenerator/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
