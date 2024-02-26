@@ -19,4 +19,4 @@ jobs:
           dotnet tool install Cake.Tool --version 1.1.0
           dotnet tool restore
           dotnet cake --target=Pack --verbosity=verbose
-          dotnet nuget push artifacts/packages/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+          dotnet nuget push artifacts/packages/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
