@@ -829,6 +829,8 @@ namespace Solana.Unity.Anchor
                 "i32" => (IdentifierName("GetS32"), 4),
                 "u64" => (IdentifierName("GetU64"), 8),
                 "i64" => (IdentifierName("GetS64"), 8),
+                "f32" => (IdentifierName("GetSingle"), 4),
+                "f64" => (IdentifierName("GetDouble"), 8),
                 "bool" => (IdentifierName("GetBool"), 1),
                 _ => throw new Exception("Unexpected Type.")
             };
@@ -1693,6 +1695,8 @@ namespace Solana.Unity.Anchor
                 "i32" => SyntaxKind.IntKeyword,
                 "u64" => SyntaxKind.ULongKeyword,
                 "i64" => SyntaxKind.LongKeyword,
+                "f32" => SyntaxKind.FloatKeyword,
+                "f64" => SyntaxKind.DoubleKeyword,
                 "bool" => SyntaxKind.BoolKeyword,
                 _ => throw new Exception("Unexpected Type.")
             };
