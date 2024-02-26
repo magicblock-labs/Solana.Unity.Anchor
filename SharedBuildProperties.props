@@ -2,11 +2,11 @@
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <Product>Solana.Unity.Anchor</Product>
-        <Version>0.2.9</Version>
-        <Copyright>Copyright 2022 &#169; Garbles Labs</Copyright>
-        <Authors>Garbles Labs</Authors>
-        <PublisherName>Garbles Labs</PublisherName>
-        <RepositoryUrl>https://github.com/garbles-labs/Solana.Unity.Anchor</RepositoryUrl>
+        <Version>0.2.11</Version>
+        <Copyright>Copyright 2023 &#169; Magicblock</Copyright>
+        <Authors>Magicblock</Authors>
+        <PublisherName>Magicblock</PublisherName>
+        <RepositoryUrl>https://github.com/magicblock-labs/Solana.Unity.Anchor</RepositoryUrl>
         <LangVersion>latest</LangVersion>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>icon.png</PackageIcon>
