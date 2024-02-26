@@ -23,7 +23,7 @@ var jsonFilePath = Directory(coverageFolder) + File(coberturaFileName + ".json")
 
 var packagesDir = artifactsDir.Combine(Directory("packages"));
 
-var deliverables = new[] {"Solana.Unity.Anchor.Tool", "Solana.Unity.Anchor.SourceGenerator"};
+var deliverables = new[] {"Solana.Unity.Anchor", "Solana.Unity.Anchor.Tool", "Solana.Unity.Anchor.SourceGenerator"};
 
 Task("Clean")
     .Does(() => {

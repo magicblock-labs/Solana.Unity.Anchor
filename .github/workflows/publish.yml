@@ -19,6 +19,4 @@ jobs:
           dotnet tool install Cake.Tool --version 1.1.0
           dotnet tool restore
           dotnet cake --target=Pack --verbosity=verbose
-          dotnet nuget push Solana.Unity.Anchor/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
-          dotnet nuget push Solana.Unity.Anchor.Tool/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
-          dotnet nuget push Solana.Unity.Anchor.SourceGenerator/bin/Release/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+          dotnet nuget push artifacts/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
