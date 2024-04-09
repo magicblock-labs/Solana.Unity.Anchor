@@ -46,7 +46,12 @@ public class AnchorSourceGenerator
                 var jsonParsed = JObject.Parse(idlStr);
 
                 // Set UnixTimestamp to Int64 in accounts
-                foreach (JToken account in (JArray)jsonParsed["accounts"])
+                if (!jsonParsed.TryGetValue("accounts", out JToken val))
+                {
+                    val = new JArray();
+                }
+
+                foreach (JToken account in (JArray)val)
                 {
                     JToken accountType = account["type"];
                     foreach (JObject fields in (JArray)accountType["fields"])
