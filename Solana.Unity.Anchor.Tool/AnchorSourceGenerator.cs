@@ -1,16 +1,11 @@
 ﻿using CommandLine;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Solana.Unity.Anchor;
 using Solana.Unity.Rpc;
 using System.IO;
 using Solana.Unity.Anchor.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 public class AnchorSourceGenerator
@@ -54,6 +49,7 @@ public class AnchorSourceGenerator
                 foreach (JToken account in (JArray)val)
                 {
                     JToken accountType = account["type"];
+                    if(accountType == null) continue;
                     foreach (JObject fields in (JArray)accountType["fields"])
                     {
                         if (fields["type"] != null && fields["type"].Type.ToString() == "Object" && fields["type"]["defined"] != null && fields["type"]["defined"].ToString() == "UnixTimestamp")

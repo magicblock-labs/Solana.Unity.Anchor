@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Solnet.Rpc;
-using Solnet.Wallet;
+using Solana.Unity.Rpc;
+using Solana.Unity.Wallet;
 
 using SequenceEnforcer;
 using Jet;
-using Solnet.Wallet.Bip39;
+using Solana.Unity.Wallet.Bip39;
 using SwitchboardV2;
 
 /// <summary>
