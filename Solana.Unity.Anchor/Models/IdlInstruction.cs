@@ -19,7 +19,8 @@ namespace Solana.Unity.Anchor.Models
 
         [JsonConverter(typeof(IIdlAccountItemConverter))]
         public IIdlAccountItem[] Accounts { get; set; }
-
+        
+        public List<byte> Discriminator { get; set; }
         public IdlField[] Args { get; set; }
     }
 }

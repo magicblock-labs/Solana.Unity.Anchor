@@ -1,7 +1,9 @@
-﻿using Solana.Unity.Anchor.Models;
+﻿using Org.BouncyCastle.Utilities;
+using Solana.Unity.Anchor.Models;
 using Solana.Unity.Anchor.Models.Types;
 using Solana.Unity.Anchor.Models.Types.Enum;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,7 +60,20 @@ namespace Solana.Unity.Anchor.Converters
 
                     propertyName = reader.GetString();
                 }
+                List<byte> discriminator = null;
+                if ("discriminator" == propertyName)
+                {
+                    discriminator = JsonSerializer.Deserialize<List<byte>>(ref reader, options);
+                    reader.Read();
+                    propertyName = reader.TokenType == JsonTokenType.PropertyName ? reader.GetString() : null;
+                }
 
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    reader.Read();
+                    types.Add(new StructIdlTypeDefinition() { Name = typeName, Fields = Array.Empty<IdlField>(), Discriminator = discriminator });
+                    continue;
+                }
                 if ("type" != propertyName) throw new JsonException("Unexpected error value.");
 
                 reader.Read();
@@ -87,7 +102,7 @@ namespace Solana.Unity.Anchor.Converters
                     if ("fields" != propertyName) throw new JsonException("Unexpected error value.");
                     var res = JsonSerializer.Deserialize<IdlField[]>(ref reader, options);
 
-                    types.Add(new StructIdlTypeDefinition() { Name = typeName, Fields = res });
+                    types.Add(new StructIdlTypeDefinition() { Name = typeName, Fields = res, Discriminator = discriminator });
                     reader.Read(); //end array
                 }
                 else

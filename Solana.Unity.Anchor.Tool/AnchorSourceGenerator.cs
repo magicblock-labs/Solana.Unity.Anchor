@@ -29,7 +29,7 @@ public class AnchorSourceGenerator
                 }
                 else
                 {
-                    idlStr = IdlRetriever.GetIdl(new(opts.Address), GetRpcClient(opts.Network));
+                    idlStr = IdlRetriever.GetIdl(new(opts.Address), GetRpcClient(opts.Network)).Result;
                 }
 
                 if (idlStr == null)

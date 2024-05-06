@@ -14,12 +14,21 @@ namespace Solana.Unity.Anchor.Models
     public class Idl
     {
         [JsonIgnore]
+        public string Address => DefaultProgramAddress ?? Metadata?.Address;
+        
+        [JsonPropertyName("address")]
         public string DefaultProgramAddress { get; set; }
 
         public string Version { get; set; }
-        public string Name { get; set; }
+        
+        [JsonIgnore]
+        public string Name => NameDirect ?? Metadata?.Name;
 
-        public string NamePascalCase => Name.ToPascalCase();
+        [JsonInclude]
+        [JsonPropertyName("name")]
+        public string NameDirect { get; set; }
+
+        public string NamePascalCase => Name?.ToPascalCase();
 
         public IdlInstruction[] Instructions { get; set; }
 
@@ -33,7 +42,8 @@ namespace Solana.Unity.Anchor.Models
         public IdlErrorCode[] Errors { get; set; }
 
         public IdlEvent[] Events { get; set; }
-
+        
+        public Metadata Metadata { get; set; }
     }
 
 }
