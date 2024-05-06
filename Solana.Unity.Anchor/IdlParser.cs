@@ -1,15 +1,11 @@
 ﻿using Solana.Unity.Anchor.Converters;
 using Solana.Unity.Anchor.Models;
+using Solana.Unity.Anchor.Models.Types;
 using Solana.Unity.Rpc;
-using Solana.Unity.Rpc.Utilities;
 using Solana.Unity.Wallet;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using System.IO.Compression;
-using System.Text;
-using Solana.Unity.Programs.Utilities;
+using System.Threading.Tasks;
 
 namespace Solana.Unity.Anchor
 {
@@ -23,6 +19,7 @@ namespace Solana.Unity.Anchor
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters = { new IIdlSeedTypeConverter() }
             });
+            PopulateFields(res);
             return res;
         }
 
@@ -31,17 +28,43 @@ namespace Solana.Unity.Anchor
             return Parse(File.ReadAllText(idlFile));
         }
 
-        public static Idl ParseProgram(PublicKey pk)
+        public static async Task<Idl> ParseProgram(PublicKey pk)
         {
-            return ParseProgram(pk, ClientFactory.GetClient(Cluster.MainNet));
+            return await ParseProgram(pk, ClientFactory.GetClient(Cluster.MainNet));
         }
 
-        public static Idl ParseProgram(PublicKey pk, IRpcClient client)
+        public static async Task<Idl> ParseProgram(PublicKey pk, IRpcClient client)
         {
-            var idlStr = IdlRetriever.GetIdl(pk, client);
+            var idlStr = await IdlRetriever.GetIdl(pk, client);
             var idl = Parse(idlStr);
 
             return idl;
+        }
+        
+        // In the newer IDL spec the accounts types are not directly defined in "accounts", but "types"
+        // This method will populate the accounts from the "types" field
+        private static void PopulateFields(Idl res)
+        {
+            if(res?.Accounts == null || res.Accounts?.Length == 0 || res.Types == null || res.Types.Length == 0) return;
+            for(int i = 0; i < res.Accounts.Length; i++)
+            {
+                var account = res.Accounts[i];
+                foreach (var type in res.Types)
+                {
+                    if (type.Name == account.Name)
+                    {
+                        if (account is StructIdlTypeDefinition)
+                        {
+                            res.Accounts[i] = new StructIdlTypeDefinition()
+                            {
+                                Name = account.Name,
+                                Fields = ((StructIdlTypeDefinition)type).Fields,
+                                Discriminator = ((StructIdlTypeDefinition)account).Discriminator,
+                            };
+                        }
+                    }
+                }
+            }
         }
 
     }

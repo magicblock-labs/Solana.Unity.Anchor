@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Solana.Unity.Anchor
 {
@@ -12,13 +13,13 @@ namespace Solana.Unity.Anchor
     {
         private const string IDL_SEED = "anchor:idl";
         
-        public static string GetIdl(PublicKey program, IRpcClient client = default)
+        public static async Task<string> GetIdl(PublicKey program, IRpcClient client = default)
         {
             client ??= ClientFactory.GetClient(Cluster.MainNet);
 
             var address = GetIdlAccount(program);
 
-            var res = client.GetAccountInfo(address);
+            var res = await client.GetAccountInfoAsync(address);
 
             if(!res.WasSuccessful || res.Result.Value == null || res.Result.Value.Data == null)
             {

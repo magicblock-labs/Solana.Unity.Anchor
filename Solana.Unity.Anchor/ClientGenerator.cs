@@ -30,6 +30,8 @@ namespace Solana.Unity.Anchor
         public static readonly SyntaxTokenList PublicModifier = TokenList(Token(SyntaxKind.PublicKeyword));
 
         public static readonly SyntaxTokenList PublicStaticModifiers = TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword));
+        
+        public static readonly SyntaxTokenList PublicConstModifiers = TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.ConstKeyword));
 
         public static readonly SyntaxTokenList PublicPartialModifiers = TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.PartialKeyword));
 
@@ -131,11 +133,28 @@ namespace Solana.Unity.Anchor
                 classes.AddRange(GenerateAccountsClassSyntaxTree(instr.Accounts, instr.Name.ToPascalCase()));
                 instructions.Add(GenerateInstructionSerializationSyntaxTree(idl, instr));
             }
-
-            classes.Add(ClassDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers, Identifier(idl.Name.ToPascalCase() + "Program"), null, null, List<TypeParameterConstraintClauseSyntax>(), List(instructions)));
-
+            
+            var programIdDeclaration = GenerateProgramId(idl);
+            classes.Add(ClassDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers, Identifier(idl.Name.ToPascalCase() + "Program"), null, null, List<TypeParameterConstraintClauseSyntax>(), List(instructions).Insert(0, programIdDeclaration)));
 
             return NamespaceDeclaration(IdentifierName("Program"), List<ExternAliasDirectiveSyntax>(), List<UsingDirectiveSyntax>(), List(classes));
+        }
+        
+        private static PropertyDeclarationSyntax GenerateProgramId(Idl idl)
+        {
+            var programIdValue = (idl.Address ?? Wallet.PublicKey.DefaultPublicKey.ToString()) ?? string.Empty;
+    
+            return PropertyDeclaration(
+                List<AttributeListSyntax>(),
+                ClientGeneratorDefaultValues.PublicConstModifiers,
+                PredefinedType(Token(SyntaxKind.StringKeyword)),
+                default,
+                Identifier("ID"),
+                default,
+                null,
+                EqualsValueClause(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(programIdValue))),
+                Token(SyntaxKind.SemicolonToken)
+            );
         }
 
         private List<ExpressionSyntax> GenerateKeysInitExpressions(IIdlAccountItem[] accounts, ExpressionSyntax identifierNameSyntax)
@@ -163,11 +182,11 @@ namespace Solana.Unity.Anchor
                         QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
                 IdentifierName("AccountMeta")),
-                        IdentifierName(singleAcc.IsMut ? "Writable" : "ReadOnly")),
+                        IdentifierName(singleAcc.Writable ? "Writable" : "ReadOnly")),
                     ArgumentList(SeparatedList(new ArgumentSyntax[]
                     {
                         Argument(
-                            singleAcc.IsOptional ?
+                            singleAcc.Optional ?
                             ConditionalExpression(
                         BinaryExpression(
                                     SyntaxKind.EqualsExpression,
@@ -189,7 +208,7 @@ namespace Solana.Unity.Anchor
                                 IdentifierName(singleAcc.Name.ToPascalCase())
                                 )
                         ),
-                        Argument(LiteralExpression(singleAcc.IsSigner ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression))
+                        Argument(LiteralExpression(singleAcc.Signer ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression))
                     }))));
 
                 }
@@ -202,7 +221,7 @@ namespace Solana.Unity.Anchor
             List<ParameterSyntax> parameters = new();
             IIdlTypeDefinitionTy[] definedTypes = idl.Types;
 
-            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.DefaultProgramAddress) ? null :
+            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address) ? null :
                 EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
 
             parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName(instr.Name.ToPascalCase() + "Accounts"), Identifier("accounts"), null));
@@ -227,9 +246,7 @@ namespace Solana.Unity.Anchor
                     ImplicitObjectCreationExpression(
                         ArgumentList(
                             SingletonSeparatedList(
-                                Argument(LiteralExpression(
-                                        SyntaxKind.StringLiteralExpression,
-                                        Literal(idl.DefaultProgramAddress))))), default)));
+                                Argument(IdentifierName("ID")))), default)));
                 body.Add(pkInit);
             }
 
@@ -883,16 +900,14 @@ namespace Solana.Unity.Anchor
             EqualsValueClauseSyntax programIdArg = null;
             ExpressionSyntax programIdExpression;
 
-            if (idl.DefaultProgramAddress != null)
+            if (idl.Address != null)
             {
                 programIdExpression = BinaryExpression(
                     SyntaxKind.CoalesceExpression,
                     IdentifierName("programId"),
                     ObjectCreationExpression(
                         IdentifierName("PublicKey"))
-                    .WithArgumentList(ArgumentList(SingletonSeparatedList(
-                        Argument(LiteralExpression(SyntaxKind.StringLiteralExpression,
-                        Literal(idl.DefaultProgramAddress)))))));
+                    .WithArgumentList(ArgumentList(SingletonSeparatedList(Argument(IdentifierName($"{idl.NamePascalCase}Program.ID"))))));
 
                 programIdArg = EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
             }
@@ -934,7 +949,9 @@ namespace Solana.Unity.Anchor
                 clientMembers.AddRange(GenerateSubscribeAccount(idl));
             }
 
-            clientMembers.AddRange(GenerateInstructionBuilderMethods(idl));
+            // Disabled SignAndSendTransaction methods as incompatible with the Unity SDK
+            // - Web3.Wallet cross platform signing
+            // clientMembers.AddRange(GenerateInstructionBuilderMethods(idl));
 
             clientMembers.Add(GenerateErrorMapping(idl));
 
@@ -1036,9 +1053,10 @@ namespace Solana.Unity.Anchor
 
             return methodDef;
         }
-
+        
         private IEnumerable<MemberDeclarationSyntax> GenerateInstructionBuilderMethods(Idl idl)
         {
+            
             List<MemberDeclarationSyntax> methods = new();
 
             foreach (var instr in idl.Instructions)
@@ -1055,7 +1073,7 @@ namespace Solana.Unity.Anchor
             List<ArgumentSyntax> arguments = new();
 
 
-            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.DefaultProgramAddress) ? null :
+            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address) ? null :
                 EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
 
             parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName(instr.Name.ToPascalCase() + "Accounts"), Identifier("accounts"), null));
@@ -1081,7 +1099,7 @@ namespace Solana.Unity.Anchor
 
 
             List<StatementSyntax> body = new();
-            if (!string.IsNullOrEmpty(idl.DefaultProgramAddress))
+            if (!string.IsNullOrEmpty(idl.Address))
             {
                 var pkInit = ExpressionStatement(
                 AssignmentExpression(
@@ -1092,7 +1110,7 @@ namespace Solana.Unity.Anchor
                             SingletonSeparatedList(
                                 Argument(LiteralExpression(
                                         SyntaxKind.StringLiteralExpression,
-                                        Literal(idl.DefaultProgramAddress))))), default)));
+                                        Literal(idl.Address))))), default)));
                 body.Add(pkInit);
             }
 
@@ -1437,8 +1455,8 @@ namespace Solana.Unity.Anchor
             {
                 typeNameClass = typeNameClass + ".Accounts." + typeNameClass;
             }
-            //build memcmp filters
-
+            
+            // build memcmp filters
             var memCmpType = QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")), IdentifierName("Models")), IdentifierName("MemCmp"));
             var memCmp = ObjectCreationExpression(memCmpType, default,
                     InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList<ExpressionSyntax>(new[]{
@@ -1543,8 +1561,8 @@ namespace Solana.Unity.Anchor
 
             // Solana.Unity.Rpc.Types.Commitment commitment = Commitment.Finalized
 
-            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.DefaultProgramAddress) ? null : EqualsValueClause(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(idl.DefaultProgramAddress)));
-            EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Finalized")));
+            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address) ? null : EqualsValueClause(IdentifierName($"{idl.NamePascalCase}Program.ID"));
+            EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Confirmed")));
 
             return MethodDeclaration(List<AttributeListSyntax>(),
                        ClientGeneratorDefaultValues.PublicAwaitModifiers,
@@ -1711,11 +1729,18 @@ namespace Solana.Unity.Anchor
 
             var sigHash = SigHash.GetAccountSignatureHash(structIdl.Name);
             var buffer = new byte[8];
-            BinaryPrimitives.WriteUInt64LittleEndian(buffer, sigHash);
+            if (structIdl.Discriminator != null)
+            {
+                buffer = structIdl.Discriminator.ToArray();
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt64LittleEndian(buffer, sigHash);
+            }
 
             List<ExpressionSyntax> init = new();
 
-            var b58 = Encoders.Base58.EncodeData(buffer);
+            var b58 =  Encoders.Base58.EncodeData(buffer);
 
             foreach (var b in buffer)
                 init.Add(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(b)));

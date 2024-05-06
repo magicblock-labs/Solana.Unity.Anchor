@@ -1,12 +1,8 @@
 ﻿using Solana.Unity.Anchor.Models.Types;
 using Solana.Unity.Anchor.Models.Types.Base;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Solana.Unity.Anchor.Converters
 {
@@ -23,6 +19,7 @@ namespace Solana.Unity.Anchor.Converters
                 {
                     "string" => new IdlString(),
                     "publicKey" => new IdlPublicKey(),
+                    "pubkey" => new IdlPublicKey(),
                     "bytes" => new IdlArray() { ValuesType = new IdlValueType() { TypeName = "u8" } },
                     "u128" or "i128" => new IdlBigInt() { TypeName = typeName },
                     "UnixTimestamp" => new UnixTimestamp(),
@@ -39,10 +36,21 @@ namespace Solana.Unity.Anchor.Converters
                 if ("defined" == typeName)
                 {
                     reader.Read();
+                    var readDefinedObj = false;
+                    if (reader.TokenType == JsonTokenType.StartObject)
+                    {
+                        reader.Read();
+                        if (reader.TokenType != JsonTokenType.PropertyName) throw new JsonException("Unexpected error value.");
+                        string propertyName = reader.GetString();
+                        if ("name" != propertyName) throw new JsonException("Unexpected error value.");
+                        reader.Read();
+                        readDefinedObj = true;
+                    }
                     if (reader.TokenType != JsonTokenType.String) throw new JsonException("Unexpected error value.");
                     string definedTypeName = reader.GetString();
                     
                     reader.Read();
+                    if (reader.TokenType == JsonTokenType.EndObject && readDefinedObj) reader.Read();
                     return new IdlDefined() { TypeName = definedTypeName };
                 }
                 else if ("option" == typeName)

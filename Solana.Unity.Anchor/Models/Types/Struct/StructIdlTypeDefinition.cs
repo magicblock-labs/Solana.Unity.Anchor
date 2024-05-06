@@ -1,9 +1,4 @@
-﻿using Solana.Unity.Anchor.CodeGen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Solana.Unity.Anchor.Models.Types
 {
@@ -12,5 +7,6 @@ namespace Solana.Unity.Anchor.Models.Types
         public string Name { get; set; }
 
         public IdlField[] Fields { get; set; }
+        public List<byte> Discriminator { get; set; }
     }
 }

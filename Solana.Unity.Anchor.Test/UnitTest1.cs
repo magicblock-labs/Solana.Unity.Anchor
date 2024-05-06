@@ -50,6 +50,51 @@ namespace Solana.Unity.Anchor.Test
             var code = c.GenerateCode(res);
             Assert.IsNotNull(code);
         }
+        
+        [TestMethod]
+        public void TestNewIdlStandard()
+        {
+            var res = IdlParser.ParseFile("Resources/PlayerData.json");
+            Assert.IsNotNull(res);
+
+            ClientGenerator c = new();
+
+            c.GenerateSyntaxTree(res);
+            Assert.IsNotNull(c);
+
+            var code = c.GenerateCode(res);
+            Assert.IsNotNull(code);
+        }
+        
+        [TestMethod]
+        public void TestBoltWorldProgramParsing()
+        {
+            var res = IdlParser.ParseFile("Resources/World.json");
+            Assert.IsNotNull(res);
+
+            ClientGenerator c = new();
+
+            c.GenerateSyntaxTree(res);
+            Assert.IsNotNull(c);
+
+            var code = c.GenerateCode(res);
+            Assert.IsNotNull(code);
+        }
+        
+        [TestMethod]
+        public void TestBoltWorldNewProgramParsing()
+        {
+            var res = IdlParser.ParseFile("Resources/WorldNew.json");
+            Assert.IsNotNull(res);
+
+            ClientGenerator c = new();
+
+            c.GenerateSyntaxTree(res);
+            Assert.IsNotNull(c);
+
+            var code = c.GenerateCode(res);
+            Assert.IsNotNull(code);
+        }
     }
 }
 
