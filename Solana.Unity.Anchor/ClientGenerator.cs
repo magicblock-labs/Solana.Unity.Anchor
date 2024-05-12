@@ -237,7 +237,7 @@ namespace Solana.Unity.Anchor
 
             List<StatementSyntax> body = new();
 
-            if (!string.IsNullOrEmpty(idl.DefaultProgramAddress))
+            if (!string.IsNullOrEmpty(idl.Address))
             {
                 var pkInit = ExpressionStatement(
                 AssignmentExpression(
