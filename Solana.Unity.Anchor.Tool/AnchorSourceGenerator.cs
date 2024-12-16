@@ -86,8 +86,6 @@ public class AnchorSourceGenerator
                     return -3;
                 }
 
-                idl.DefaultProgramAddress = opts.Address;
-
                 ClientGenerator cg = new ClientGenerator();
 
                 var code = cg.GenerateCode(idl);

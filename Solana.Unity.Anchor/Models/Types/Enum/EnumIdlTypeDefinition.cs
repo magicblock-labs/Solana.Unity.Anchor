@@ -13,6 +13,9 @@ namespace Solana.Unity.Anchor.Models.Types
     public class EnumIdlTypeDefinition : IIdlTypeDefinitionTy
     {
         public string Name { get; set; }
+        public string Address { get; set;  }
+        
+        public bool Writable { get; set;  }
 
         public IEnumVariant[] Variants { get; set; }
 

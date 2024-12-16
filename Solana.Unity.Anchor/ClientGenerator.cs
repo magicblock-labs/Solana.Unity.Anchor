@@ -19,26 +19,34 @@ namespace Solana.Unity.Anchor
     public static class ClientGeneratorDefaultValues
     {
         public static readonly AccessorListSyntax PropertyAccessorList = AccessorList(List<AccessorDeclarationSyntax>()
-            .Add(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)))
-            .Add(AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken))));
+            .Add(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)))
+            .Add(AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))));
 
-        public static readonly AccessorListSyntax ClientPropertyAccessorList = AccessorList(List<AccessorDeclarationSyntax>()
-            .Add(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)))
-            .Add(AccessorDeclaration(SyntaxKind.InitAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken))));
+        public static readonly AccessorListSyntax ClientPropertyAccessorList = AccessorList(
+            List<AccessorDeclarationSyntax>()
+                .Add(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)))
+                .Add(AccessorDeclaration(SyntaxKind.InitAccessorDeclaration)
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))));
 
 
         public static readonly SyntaxTokenList PublicModifier = TokenList(Token(SyntaxKind.PublicKeyword));
 
-        public static readonly SyntaxTokenList PublicStaticModifiers = TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword));
-        
-        public static readonly SyntaxTokenList PublicConstModifiers = TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.ConstKeyword));
+        public static readonly SyntaxTokenList PublicStaticModifiers =
+            TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.StaticKeyword));
 
-        public static readonly SyntaxTokenList PublicPartialModifiers = TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.PartialKeyword));
+        public static readonly SyntaxTokenList PublicConstModifiers =
+            TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.ConstKeyword));
 
-        public static readonly SyntaxTokenList PublicAwaitModifiers = TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.AsyncKeyword));
+        public static readonly SyntaxTokenList PublicPartialModifiers =
+            TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.PartialKeyword));
+
+        public static readonly SyntaxTokenList PublicAwaitModifiers =
+            TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.AsyncKeyword));
 
         public static readonly SyntaxToken OpenBraceToken = Token(SyntaxKind.OpenBraceToken);
-
     }
 
     public class ClientGenerator
@@ -48,10 +56,7 @@ namespace Solana.Unity.Anchor
 
         static ClientGenerator()
         {
-            LANG_KEYWORDS = new()
-            {
-                "params"
-            };
+            LANG_KEYWORDS = new() { "params" };
         }
 
 
@@ -74,9 +79,11 @@ namespace Solana.Unity.Anchor
 
             members.Add(GenerateProgramSyntaxTree(idl));
 
-            var namespaceDeclaration = NamespaceDeclaration(ParseName(idl.Name.ToPascalCase()), List<ExternAliasDirectiveSyntax>(), List<UsingDirectiveSyntax>(), List(members));
+            var namespaceDeclaration = NamespaceDeclaration(ParseName(idl.Name.ToPascalCase()),
+                List<ExternAliasDirectiveSyntax>(), List<UsingDirectiveSyntax>(), List(members));
 
-            var st = SyntaxTree(CompilationUnit(List<ExternAliasDirectiveSyntax>(), List(GenerateUsings(idl)), List<AttributeListSyntax>(), SingletonList<MemberDeclarationSyntax>(namespaceDeclaration)));
+            var st = SyntaxTree(CompilationUnit(List<ExternAliasDirectiveSyntax>(), List(GenerateUsings(idl)),
+                List<AttributeListSyntax>(), SingletonList<MemberDeclarationSyntax>(namespaceDeclaration)));
 
             return st;
         }
@@ -119,7 +126,6 @@ namespace Solana.Unity.Anchor
                 usings.Add(UsingDirective(IdentifierName(idl.Name.ToPascalCase() + ".Types")));
 
 
-
             return usings;
         }
 
@@ -133,17 +139,21 @@ namespace Solana.Unity.Anchor
                 classes.AddRange(GenerateAccountsClassSyntaxTree(instr.Accounts, instr.Name.ToPascalCase()));
                 instructions.Add(GenerateInstructionSerializationSyntaxTree(idl, instr));
             }
-            
-            var programIdDeclaration = GenerateProgramId(idl);
-            classes.Add(ClassDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers, Identifier(idl.Name.ToPascalCase() + "Program"), null, null, List<TypeParameterConstraintClauseSyntax>(), List(instructions).Insert(0, programIdDeclaration)));
 
-            return NamespaceDeclaration(IdentifierName("Program"), List<ExternAliasDirectiveSyntax>(), List<UsingDirectiveSyntax>(), List(classes));
+            var programIdDeclaration = GenerateProgramId(idl);
+            classes.Add(ClassDeclaration(List<AttributeListSyntax>(),
+                ClientGeneratorDefaultValues.PublicStaticModifiers, Identifier(idl.Name.ToPascalCase() + "Program"),
+                null, null, List<TypeParameterConstraintClauseSyntax>(),
+                List(instructions).Insert(0, programIdDeclaration)));
+
+            return NamespaceDeclaration(IdentifierName("Program"), List<ExternAliasDirectiveSyntax>(),
+                List<UsingDirectiveSyntax>(), List(classes));
         }
-        
+
         private static PropertyDeclarationSyntax GenerateProgramId(Idl idl)
         {
-            var programIdValue = (idl.Address ?? Wallet.PublicKey.DefaultPublicKey.ToString()) ?? string.Empty;
-    
+            var programIdValue = idl.Address ?? string.Empty;
+
             return PropertyDeclaration(
                 List<AttributeListSyntax>(),
                 ClientGeneratorDefaultValues.PublicConstModifiers,
@@ -157,7 +167,8 @@ namespace Solana.Unity.Anchor
             );
         }
 
-        private List<ExpressionSyntax> GenerateKeysInitExpressions(IIdlAccountItem[] accounts, ExpressionSyntax identifierNameSyntax)
+        private List<ExpressionSyntax> GenerateKeysInitExpressions(IIdlAccountItem[] accounts,
+            ExpressionSyntax identifierNameSyntax)
         {
             List<ExpressionSyntax> initExpressions = new();
 
@@ -175,44 +186,45 @@ namespace Solana.Unity.Anchor
                 }
                 else if (acc is IdlAccount singleAcc)
                 {
-                    
                     initExpressions.Add(InvocationExpression(
                         MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
-                        IdentifierName("Models")),
-                IdentifierName("AccountMeta")),
-                        IdentifierName(singleAcc.Writable ? "Writable" : "ReadOnly")),
-                    ArgumentList(SeparatedList(new ArgumentSyntax[]
-                    {
-                        Argument(
-                            singleAcc.Optional ?
-                            ConditionalExpression(
-                        BinaryExpression(
-                                    SyntaxKind.EqualsExpression,
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            QualifiedName(QualifiedName(
+                                    QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
+                                    IdentifierName("Models")),
+                                IdentifierName("AccountMeta")),
+                            IdentifierName(singleAcc.Writable ? "Writable" : "ReadOnly")),
+                        ArgumentList(SeparatedList(new ArgumentSyntax[]
+                        {
+                            Argument(
+                                singleAcc.Optional
+                                    ? ConditionalExpression(
+                                        BinaryExpression(
+                                            SyntaxKind.EqualsExpression,
+                                            MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                identifierNameSyntax,
+                                                IdentifierName(singleAcc.Name.ToPascalCase())),
+                                            LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                        ),
+                                        IdentifierName("programId"),
+                                        MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            identifierNameSyntax,
+                                            IdentifierName(singleAcc.Name.ToPascalCase()))
+                                    )
+                                    : MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
                                         identifierNameSyntax,
-                                        IdentifierName(singleAcc.Name.ToPascalCase())),
-                                    LiteralExpression(SyntaxKind.NullLiteralExpression)
-                                    ), 
-                        
-                        IdentifierName("programId"), 
-                        MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                identifierNameSyntax,
-                                IdentifierName(singleAcc.Name.ToPascalCase()))
-                            ) : 
-                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, 
-                                identifierNameSyntax, 
-                                IdentifierName(singleAcc.Name.ToPascalCase())
-                                )
-                        ),
-                        Argument(LiteralExpression(singleAcc.Signer ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression))
-                    }))));
-
+                                        IdentifierName(singleAcc.Name.ToPascalCase())
+                                    )
+                            ),
+                            Argument(LiteralExpression(singleAcc.Signer
+                                ? SyntaxKind.TrueLiteralExpression
+                                : SyntaxKind.FalseLiteralExpression))
+                        }))));
                 }
             }
+
             return initExpressions;
         }
 
@@ -221,17 +233,21 @@ namespace Solana.Unity.Anchor
             List<ParameterSyntax> parameters = new();
             IIdlTypeDefinitionTy[] definedTypes = idl.Types;
 
-            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address) ? null :
-                EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
+            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address)
+                ? null
+                : EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
 
-            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName(instr.Name.ToPascalCase() + "Accounts"), Identifier("accounts"), null));
+            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(),
+                IdentifierName(instr.Name.ToPascalCase() + "Accounts"), Identifier("accounts"), null));
 
             foreach (var arg in instr.Args)
             {
-                parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), GetTypeSyntax(arg.Type), Identifier(GetNormalizedName(arg.Name)), null));
+                parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), GetTypeSyntax(arg.Type),
+                    Identifier(GetNormalizedName(arg.Name)), null));
             }
 
-            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"), Identifier("programId"), defaultProgram));
+            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"),
+                Identifier("programId"), defaultProgram));
 
             List<ExpressionSyntax> initExprs = GenerateKeysInitExpressions(instr.Accounts, IdentifierName("accounts"));
 
@@ -240,25 +256,30 @@ namespace Solana.Unity.Anchor
             if (!string.IsNullOrEmpty(idl.Address))
             {
                 var pkInit = ExpressionStatement(
-                AssignmentExpression(
-                    SyntaxKind.CoalesceAssignmentExpression,
-                    IdentifierName("programId"),
-                    ImplicitObjectCreationExpression(
-                        ArgumentList(
-                            SingletonSeparatedList(
-                                Argument(IdentifierName("ID")))), default)));
+                    AssignmentExpression(
+                        SyntaxKind.CoalesceAssignmentExpression,
+                        IdentifierName("programId"),
+                        ImplicitObjectCreationExpression(
+                            ArgumentList(
+                                SingletonSeparatedList(
+                                    Argument(IdentifierName("ID")))), default)));
                 body.Add(pkInit);
             }
 
 
-            var initExpr = InitializerExpression(SyntaxKind.CollectionInitializerExpression, ClientGeneratorDefaultValues.OpenBraceToken, SeparatedList<SyntaxNode>(initExprs), Token(SyntaxKind.CloseBraceToken));
+            var initExpr = InitializerExpression(SyntaxKind.CollectionInitializerExpression,
+                ClientGeneratorDefaultValues.OpenBraceToken, SeparatedList<SyntaxNode>(initExprs),
+                Token(SyntaxKind.CloseBraceToken));
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(
-                GenericName(Identifier("List"), TypeArgumentList(SeparatedList(new TypeSyntax[] { QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
-                        IdentifierName("Models")),
-                IdentifierName("AccountMeta")) }))),
+                GenericName(Identifier("List"), TypeArgumentList(SeparatedList(new TypeSyntax[]
+                {
+                    QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
+                            IdentifierName("Models")),
+                        IdentifierName("AccountMeta"))
+                }))),
                 SingletonSeparatedList(VariableDeclarator(Identifier("keys"), null,
-                EqualsValueClause(ImplicitObjectCreationExpression(ArgumentList(), initExpr)))))));
+                    EqualsValueClause(ImplicitObjectCreationExpression(ArgumentList(), initExpr)))))));
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(
                 ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier())),
@@ -271,24 +292,28 @@ namespace Solana.Unity.Anchor
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
                 SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
-                EqualsValueClause(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))))));
+                    EqualsValueClause(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))))));
 
 
-            body.Add(ExpressionStatement(InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                IdentifierName("_data"), IdentifierName("WriteU64")),
+            body.Add(ExpressionStatement(InvocationExpression(MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName("_data"), IdentifierName("WriteU64")),
                 ArgumentList(SeparatedList(new ArgumentSyntax[]
                 {
-                    Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(SigHash.GetInstructionSignatureHash(instr.Name, "global")))),
+                    Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                        Literal(SigHash.GetInstructionSignatureHash(instr.Name, "global")))),
                     Argument(IdentifierName("offset"))
                 })))));
 
-            body.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
+            body.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                IdentifierName("offset"),
                 LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(8)))));
 
 
             foreach (var arg in instr.Args)
             {
-                body.AddRange(GenerateArgSerializationSyntaxList(definedTypes, arg.Type, IdentifierName(GetNormalizedName(arg.Name))));
+                body.AddRange(GenerateArgSerializationSyntaxList(definedTypes, arg.Type,
+                    IdentifierName(GetNormalizedName(arg.Name))));
             }
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(
@@ -297,33 +322,41 @@ namespace Solana.Unity.Anchor
                     null,
                     EqualsValueClause(ArrayCreationExpression(
                         ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)),
-                            SingletonList(ArrayRankSpecifier(SingletonSeparatedList<ExpressionSyntax>(IdentifierName("offset"))))))))))));
+                            SingletonList(
+                                ArrayRankSpecifier(
+                                    SingletonSeparatedList<ExpressionSyntax>(IdentifierName("offset"))))))))))));
 
-            body.Add(ExpressionStatement(InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                IdentifierName("Array"), IdentifierName("Copy")),
+            body.Add(ExpressionStatement(InvocationExpression(MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName("Array"), IdentifierName("Copy")),
                 ArgumentList(SeparatedList(new ArgumentSyntax[]
                 {
-                    Argument(IdentifierName("_data")),
-                    Argument(IdentifierName("resultData")),
+                    Argument(IdentifierName("_data")), Argument(IdentifierName("resultData")),
                     Argument(IdentifierName("offset"))
                 })))));
 
-            body.Add(ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
+            body.Add(ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(
+                        QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
-                IdentifierName("TransactionInstruction")), null,
+                    IdentifierName("TransactionInstruction")), null,
                 InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList(new ExpressionSyntax[]
                 {
-                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, IdentifierName("Keys"), IdentifierName("keys") ),
-                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, IdentifierName("ProgramId"),
-                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("programId"), IdentifierName("KeyBytes"))),
-
-                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, IdentifierName("Data"), IdentifierName("resultData")),
-
+                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, IdentifierName("Keys"),
+                        IdentifierName("keys")),
+                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                        IdentifierName("ProgramId"),
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("programId"),
+                            IdentifierName("KeyBytes"))),
+                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, IdentifierName("Data"),
+                        IdentifierName("resultData")),
                 })))));
 
-            return MethodDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers, QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
+            return MethodDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers,
+                QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
-                IdentifierName("TransactionInstruction")), null, Identifier(instr.Name.ToPascalCase()), null, ParameterList(SeparatedList(parameters)), List<TypeParameterConstraintClauseSyntax>(), Block(body), null);
+                    IdentifierName("TransactionInstruction")), null, Identifier(instr.Name.ToPascalCase()), null,
+                ParameterList(SeparatedList(parameters)), List<TypeParameterConstraintClauseSyntax>(), Block(body),
+                null);
         }
 
         private bool IsSimpleEnum(IIdlTypeDefinitionTy[] types, string name)
@@ -334,10 +367,12 @@ namespace Solana.Unity.Anchor
             {
                 return enumDef.Variants.All(x => x is SimpleEnumVariant);
             }
+
             return false;
         }
 
-        private IEnumerable<StatementSyntax> GenerateDeserializationSyntaxList(IIdlTypeDefinitionTy[] definedTypes, IIdlType type, ExpressionSyntax identifierNameSyntax)
+        private IEnumerable<StatementSyntax> GenerateDeserializationSyntaxList(IIdlTypeDefinitionTy[] definedTypes,
+            IIdlType type, ExpressionSyntax identifierNameSyntax)
         {
             List<StatementSyntax> syntaxes = new();
 
@@ -345,8 +380,8 @@ namespace Solana.Unity.Anchor
             {
                 case IdlDefined definedType when !IsSimpleEnum(definedTypes, definedType.TypeName):
                     {
-                        string tmpName = identifierNameSyntax.ToString().ToCamelCase().ToCamelCase().
-                            Replace(".", null).Replace("[", null).Replace("]", null);
+                        string tmpName = identifierNameSyntax.ToString().ToCamelCase().ToCamelCase().Replace(".", null)
+                            .Replace("[", null).Replace("]", null);
                         //type.Deserialize(_data, offset, out var bla);
                         //dest.prop = bla;
                         syntaxes.Add(ExpressionStatement(AssignmentExpression(
@@ -359,13 +394,14 @@ namespace Solana.Unity.Anchor
                                     IdentifierName("Deserialize")),
                                 ArgumentList(SeparatedList(new ArgumentSyntax[]
                                 {
-                                    Argument(IdentifierName("_data")),
-                                    Argument(IdentifierName("offset")),
-                                    Argument(null, Token(SyntaxKind.OutKeyword), DeclarationExpression(IdentifierName("var"), SingleVariableDesignation(Identifier(tmpName))))
-
+                                    Argument(IdentifierName("_data")), Argument(IdentifierName("offset")),
+                                    Argument(null, Token(SyntaxKind.OutKeyword),
+                                        DeclarationExpression(IdentifierName("var"),
+                                            SingleVariableDesignation(Identifier(tmpName))))
                                 }))))));
 
-                        syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, identifierNameSyntax, IdentifierName(tmpName))));
+                        syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                            identifierNameSyntax, IdentifierName(tmpName))));
                         break;
                     }
                 case IdlDefined definedType:
@@ -388,7 +424,8 @@ namespace Solana.Unity.Anchor
                         LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(1)))));
                     break;
                 case IdlValueType valueType:
-                    (IdentifierNameSyntax serializerFunctionName, int typeSize) = GetDeserializationValuesForValueType(valueType);
+                    (IdentifierNameSyntax serializerFunctionName, int typeSize) =
+                        GetDeserializationValuesForValueType(valueType);
 
                     syntaxes.Add(ExpressionStatement(AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
@@ -409,8 +446,8 @@ namespace Solana.Unity.Anchor
                     break;
                 case IdlString str:
                     {
-                        string tmpName = identifierNameSyntax.ToString().ToCamelCase().ToCamelCase().
-                            Replace(".", null).Replace("[", null).Replace("]", null);
+                        string tmpName = identifierNameSyntax.ToString().ToCamelCase().ToCamelCase().Replace(".", null)
+                            .Replace("[", null).Replace("]", null);
 
                         syntaxes.Add(ExpressionStatement(AssignmentExpression(
                             SyntaxKind.AddAssignmentExpression,
@@ -423,29 +460,33 @@ namespace Solana.Unity.Anchor
                                 ArgumentList(SeparatedList(new ArgumentSyntax[]
                                 {
                                     Argument(IdentifierName("offset")),
-                                    Argument(null, Token(SyntaxKind.OutKeyword), DeclarationExpression(IdentifierName("var"), SingleVariableDesignation(Identifier(tmpName))))
-
+                                    Argument(null, Token(SyntaxKind.OutKeyword),
+                                        DeclarationExpression(IdentifierName("var"),
+                                            SingleVariableDesignation(Identifier(tmpName))))
                                 }))))));
 
-                        syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, identifierNameSyntax, IdentifierName(tmpName))));
+                        syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                            identifierNameSyntax, IdentifierName(tmpName))));
                         break;
                     }
                 case IdlTuple tup:
                     {
-                    break;
+                        break;
                     }
                 case IdlArray arr:
                     {
-                        SyntaxToken lenIdentifier = Identifier(identifierNameSyntax.ToString().ToCamelCase().Replace(".", null).Replace("[", null).Replace("]", null) + "Length");
+                        SyntaxToken lenIdentifier = Identifier(identifierNameSyntax.ToString().ToCamelCase()
+                            .Replace(".", null).Replace("[", null).Replace("]", null) + "Length");
                         IdentifierNameSyntax lenIdExpression = IdentifierName(lenIdentifier);
 
-                        ExpressionSyntax lenExpression = arr.Size.HasValue ?
-                            LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(arr.Size.Value)) :
-                            lenIdExpression;
+                        ExpressionSyntax lenExpression = arr.Size.HasValue
+                            ? LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(arr.Size.Value))
+                            : lenIdExpression;
 
                         if (!arr.Size.HasValue)
                         {
-                            syntaxes.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
+                            syntaxes.Add(LocalDeclarationStatement(VariableDeclaration(
+                                PredefinedType(Token(SyntaxKind.IntKeyword)),
                                 SingletonSeparatedList(VariableDeclarator(lenIdentifier, null,
                                     EqualsValueClause(CastExpression(
                                         PredefinedType(
@@ -459,10 +500,9 @@ namespace Solana.Unity.Anchor
                                                 Argument(IdentifierName("offset"))
                                             }))))))))));
 
-                            syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
+                            syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                                IdentifierName("offset"),
                                 LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(4)))));
-
-
                         }
 
                         if (arr.ValuesType is IdlValueType { TypeName: "u8" })
@@ -477,33 +517,44 @@ namespace Solana.Unity.Anchor
                                         IdentifierName("GetBytes")),
                                     ArgumentList(SeparatedList(new ArgumentSyntax[]
                                     {
-                                        Argument(IdentifierName("offset")),
-                                        Argument(lenExpression)
-
+                                        Argument(IdentifierName("offset")), Argument(lenExpression)
                                     }))))));
 
-                            syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"), lenExpression)));
+                            syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                                IdentifierName("offset"), lenExpression)));
                         }
                         else
                         {
-                            var tmp = identifierNameSyntax.ToString().ToCamelCase().Replace(".", null).Replace("[", null).Replace("]", null) + "Idx";
+                            var tmp = identifierNameSyntax.ToString().ToCamelCase().Replace(".", null)
+                                .Replace("[", null).Replace("]", null) + "Idx";
                             var idxToken = Identifier(tmp);
                             var idxExpression = IdentifierName(idxToken);
 
-                            var iteratorIdxDeclaration = VariableDeclaration(PredefinedType(Token(SyntaxKind.UIntKeyword)), SingletonSeparatedList(VariableDeclarator(idxToken, null,
-                                EqualsValueClause(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))));
+                            var iteratorIdxDeclaration = VariableDeclaration(
+                                PredefinedType(Token(SyntaxKind.UIntKeyword)), SingletonSeparatedList(
+                                    VariableDeclarator(idxToken, null,
+                                        EqualsValueClause(LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                                            Literal(0))))));
 
-                            var condition = BinaryExpression(SyntaxKind.LessThanExpression, idxExpression, lenExpression);
+                            var condition = BinaryExpression(SyntaxKind.LessThanExpression, idxExpression,
+                                lenExpression);
 
-                            var increment = SingletonSeparatedList<ExpressionSyntax>(PostfixUnaryExpression(SyntaxKind.PostIncrementExpression, idxExpression));
+                            var increment = SingletonSeparatedList<ExpressionSyntax>(
+                                PostfixUnaryExpression(SyntaxKind.PostIncrementExpression, idxExpression));
 
                             var typeSyntax = (ArrayTypeSyntax)GetTypeSyntax(type);
 
-                            syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, identifierNameSyntax, ArrayCreationExpression(FixArrayCreationSize(typeSyntax, lenExpression)))));
+                            syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                                identifierNameSyntax,
+                                ArrayCreationExpression(FixArrayCreationSize(typeSyntax, lenExpression)))));
 
-                            var elementAccessExpression = ElementAccessExpression(identifierNameSyntax, BracketedArgumentList(SingletonSeparatedList(Argument(idxExpression))));
+                            var elementAccessExpression = ElementAccessExpression(identifierNameSyntax,
+                                BracketedArgumentList(SingletonSeparatedList(Argument(idxExpression))));
 
-                            syntaxes.Add(ForStatement(iteratorIdxDeclaration, SeparatedList<ExpressionSyntax>(), condition, increment, Block(GenerateDeserializationSyntaxList(definedTypes, arr.ValuesType, elementAccessExpression))));
+                            syntaxes.Add(ForStatement(iteratorIdxDeclaration, SeparatedList<ExpressionSyntax>(),
+                                condition, increment,
+                                Block(GenerateDeserializationSyntaxList(definedTypes, arr.ValuesType,
+                                    elementAccessExpression))));
                         }
 
                         break;
@@ -523,10 +574,13 @@ namespace Solana.Unity.Anchor
                                 {
                                     Argument(IdentifierName("offset")),
                                     Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(16))),
-                                    Argument(LiteralExpression(isSigned ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression))
+                                    Argument(LiteralExpression(isSigned
+                                        ? SyntaxKind.TrueLiteralExpression
+                                        : SyntaxKind.FalseLiteralExpression))
                                 }))))));
 
-                        syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
+                        syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                            IdentifierName("offset"),
                             LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(16)))));
                         break;
                     }
@@ -543,7 +597,8 @@ namespace Solana.Unity.Anchor
                                 Argument(IdentifierName("offset"))
                             }))))));
 
-                    syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
+                    syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                        IdentifierName("offset"),
                         LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(32)))));
                     break;
                 case IdlOptional optionalType:
@@ -554,12 +609,14 @@ namespace Solana.Unity.Anchor
                                 IdentifierName("GetBool")),
                             ArgumentList(SeparatedList(new ArgumentSyntax[]
                             {
-                                Argument(PostfixUnaryExpression(SyntaxKind.PostIncrementExpression, IdentifierName("offset")))
+                                Argument(PostfixUnaryExpression(SyntaxKind.PostIncrementExpression,
+                                    IdentifierName("offset")))
                             })));
 
                         syntaxes.Add(IfStatement(
                             cond,
-                            Block(GenerateDeserializationSyntaxList(definedTypes, optionalType.ValuesType, identifierNameSyntax))));
+                            Block(GenerateDeserializationSyntaxList(definedTypes, optionalType.ValuesType,
+                                identifierNameSyntax))));
                         break;
                     }
                 default:
@@ -578,15 +635,18 @@ namespace Solana.Unity.Anchor
             };
 
 
-        private IEnumerable<StatementSyntax> GenerateArgSerializationSyntaxList(IIdlTypeDefinitionTy[] definedTypes, IIdlType type, ExpressionSyntax identifierNameSyntax)
+        private IEnumerable<StatementSyntax> GenerateArgSerializationSyntaxList(IIdlTypeDefinitionTy[] definedTypes,
+            IIdlType type, ExpressionSyntax identifierNameSyntax)
         {
             List<StatementSyntax> syntaxes = new();
 
             if (type is IdlDefined definedType)
             {
-                if (identifierNameSyntax.ToString().Length > 6 && identifierNameSyntax.ToString().Substring(identifierNameSyntax.ToString().Length - 6) == ".Value")
+                if (identifierNameSyntax.ToString().Length > 6 &&
+                    identifierNameSyntax.ToString().Substring(identifierNameSyntax.ToString().Length - 6) == ".Value")
                 {
-                    identifierNameSyntax = IdentifierName(identifierNameSyntax.ToString().Remove(identifierNameSyntax.ToString().Length - 6));
+                    identifierNameSyntax = IdentifierName(identifierNameSyntax.ToString()
+                        .Remove(identifierNameSyntax.ToString().Length - 6));
                 }
 
                 if (!IsSimpleEnum(definedTypes, definedType.TypeName))
@@ -600,8 +660,7 @@ namespace Solana.Unity.Anchor
                                 IdentifierName("Serialize")),
                             ArgumentList(SeparatedList(new ArgumentSyntax[]
                             {
-                            Argument(IdentifierName("_data")),
-                            Argument(IdentifierName("offset"))
+                                Argument(IdentifierName("_data")), Argument(IdentifierName("offset"))
                             }))))));
                 }
                 else
@@ -613,8 +672,9 @@ namespace Solana.Unity.Anchor
                             IdentifierName("WriteU8")),
                         ArgumentList(SeparatedList(new ArgumentSyntax[]
                         {
-                        Argument(CastExpression(PredefinedType(Token(SyntaxKind.ByteKeyword)), identifierNameSyntax)),
-                        Argument(IdentifierName("offset"))
+                            Argument(CastExpression(PredefinedType(Token(SyntaxKind.ByteKeyword)),
+                                identifierNameSyntax)),
+                            Argument(IdentifierName("offset"))
                         })))));
 
                     syntaxes.Add(ExpressionStatement(AssignmentExpression(
@@ -634,8 +694,7 @@ namespace Solana.Unity.Anchor
                         serializerFunctionName),
                     ArgumentList(SeparatedList(new ArgumentSyntax[]
                     {
-                        Argument(identifierNameSyntax),
-                        Argument(IdentifierName("offset"))
+                        Argument(identifierNameSyntax), Argument(IdentifierName("offset"))
                     })))));
 
                 syntaxes.Add(ExpressionStatement(AssignmentExpression(
@@ -655,8 +714,7 @@ namespace Solana.Unity.Anchor
                             IdentifierName("WriteBorshString")),
                         ArgumentList(SeparatedList(new ArgumentSyntax[]
                         {
-                            Argument(identifierNameSyntax),
-                            Argument(IdentifierName("offset"))
+                            Argument(identifierNameSyntax), Argument(IdentifierName("offset"))
                         }))))));
             }
             else if (type is IdlArray arr)
@@ -680,8 +738,9 @@ namespace Solana.Unity.Anchor
                             Argument(IdentifierName("offset"))
                         })))));
 
-                    syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
-                    LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(4)))));
+                    syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                        IdentifierName("offset"),
+                        LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(4)))));
                 }
 
                 // need to create different serialization for u8 arr
@@ -695,18 +754,21 @@ namespace Solana.Unity.Anchor
                             IdentifierName("WriteSpan")),
                         ArgumentList(SeparatedList(new ArgumentSyntax[]
                         {
-                            Argument(identifierNameSyntax),
-                            Argument(IdentifierName("offset"))
+                            Argument(identifierNameSyntax), Argument(IdentifierName("offset"))
                         })))));
 
-                    syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
-                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, identifierNameSyntax, IdentifierName("Length")))));
+                    syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                        IdentifierName("offset"),
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, identifierNameSyntax,
+                            IdentifierName("Length")))));
                 }
                 else
                 {
-                    var foreachBlockContent = Block(GenerateArgSerializationSyntaxList(definedTypes, arr.ValuesType, varIdExpression));
+                    var foreachBlockContent =
+                        Block(GenerateArgSerializationSyntaxList(definedTypes, arr.ValuesType, varIdExpression));
 
-                    syntaxes.Add(ForEachStatement(IdentifierName("var"), varIdIdentifier, identifierNameSyntax, foreachBlockContent));
+                    syntaxes.Add(ForEachStatement(IdentifierName("var"), varIdIdentifier, identifierNameSyntax,
+                        foreachBlockContent));
                 }
             }
             else if (type is IdlBigInt bi)
@@ -721,13 +783,15 @@ namespace Solana.Unity.Anchor
                         IdentifierName("WriteBigInt")),
                     ArgumentList(SeparatedList(new ArgumentSyntax[]
                     {
-                            Argument(identifierNameSyntax),
-                            Argument(IdentifierName("offset")),
-                            Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(16))),
-                            Argument(LiteralExpression(isUnsigned ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression))
+                        Argument(identifierNameSyntax), Argument(IdentifierName("offset")),
+                        Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(16))),
+                        Argument(LiteralExpression(isUnsigned
+                            ? SyntaxKind.TrueLiteralExpression
+                            : SyntaxKind.FalseLiteralExpression))
                     })))));
 
-                syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
+                syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                    IdentifierName("offset"),
                     LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(16)))));
             }
             else if (type is IdlPublicKey)
@@ -739,16 +803,17 @@ namespace Solana.Unity.Anchor
                         IdentifierName("WritePubKey")),
                     ArgumentList(SeparatedList(new ArgumentSyntax[]
                     {
-                            Argument(identifierNameSyntax),
-                            Argument(IdentifierName("offset"))
+                        Argument(identifierNameSyntax), Argument(IdentifierName("offset"))
                     })))));
 
-                syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
+                syntaxes.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                    IdentifierName("offset"),
                     LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(32)))));
             }
             else if (type is IdlOptional optionalType)
             {
-                var condition = BinaryExpression(SyntaxKind.NotEqualsExpression, identifierNameSyntax, LiteralExpression(SyntaxKind.NullLiteralExpression));
+                var condition = BinaryExpression(SyntaxKind.NotEqualsExpression, identifierNameSyntax,
+                    LiteralExpression(SyntaxKind.NullLiteralExpression));
 
                 List<StatementSyntax> conditionBody = new();
 
@@ -801,7 +866,6 @@ namespace Solana.Unity.Anchor
                             Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))),
                             Argument(IdentifierName("offset"))
                         })))),
-
                     ExpressionStatement(AssignmentExpression(
                         SyntaxKind.AddAssignmentExpression,
                         IdentifierName("offset"),
@@ -816,6 +880,7 @@ namespace Solana.Unity.Anchor
             {
                 throw new Exception("Unexpected type " + type.GetType().FullName);
             }
+
             return syntaxes;
         }
 
@@ -860,18 +925,34 @@ namespace Solana.Unity.Anchor
             {
                 if (acc is IdlAccount singleAcc)
                 {
-                    currentClassMembers.Add(PropertyDeclaration(
+                    var property = PropertyDeclaration(
                         List<AttributeListSyntax>(),
                         ClientGeneratorDefaultValues.PublicModifier,
                         IdentifierName("PublicKey"),
                         default,
                         Identifier(singleAcc.Name.ToPascalCase()),
-                        ClientGeneratorDefaultValues.PropertyAccessorList));
+                        ClientGeneratorDefaultValues.PropertyAccessorList);
+                    if (singleAcc.Address != null)
+                    {
+                        property = property.WithInitializer(
+                            singleAcc.Address != null
+                                ? EqualsValueClause(
+                                    ObjectCreationExpression(IdentifierName("PublicKey"))
+                                        .WithArgumentList(
+                                            ArgumentList(SingletonSeparatedList(
+                                                Argument(
+                                                    LiteralExpression(SyntaxKind.StringLiteralExpression,
+                                                        Literal(singleAcc.Address))))))
+                                )
+                                : null).WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+                    }
+
+                    currentClassMembers.Add(property);
                 }
                 else if (acc is IdlAccounts multipleAccounts)
                 {
-                    classes.AddRange(GenerateAccountsClassSyntaxTree(multipleAccounts.Accounts, v + multipleAccounts.Name.ToPascalCase()));
-
+                    classes.AddRange(GenerateAccountsClassSyntaxTree(multipleAccounts.Accounts,
+                        v + multipleAccounts.Name.ToPascalCase()));
                     currentClassMembers.Add(PropertyDeclaration(
                         List<AttributeListSyntax>(),
                         ClientGeneratorDefaultValues.PublicModifier,
@@ -906,8 +987,9 @@ namespace Solana.Unity.Anchor
                     SyntaxKind.CoalesceExpression,
                     IdentifierName("programId"),
                     ObjectCreationExpression(
-                        IdentifierName("PublicKey"))
-                    .WithArgumentList(ArgumentList(SingletonSeparatedList(Argument(IdentifierName($"{idl.NamePascalCase}Program.ID"))))));
+                            IdentifierName("PublicKey"))
+                        .WithArgumentList(ArgumentList(
+                            SingletonSeparatedList(Argument(IdentifierName($"{idl.NamePascalCase}Program.ID"))))));
 
                 programIdArg = EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
             }
@@ -918,19 +1000,24 @@ namespace Solana.Unity.Anchor
 
             var constructorParameters = ParameterList(SeparatedList(new ParameterSyntax[]
             {
-                Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("IRpcClient"), Identifier("rpcClient"), null),
-                Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("IStreamingRpcClient"), Identifier("streamingRpcClient"), null),
-                Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"), Identifier("programId"), programIdArg),
+                Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("IRpcClient"),
+                    Identifier("rpcClient"), null),
+                Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("IStreamingRpcClient"),
+                    Identifier("streamingRpcClient"), null),
+                Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"),
+                    Identifier("programId"), programIdArg),
             }));
 
             var body = Block();
 
-            return ConstructorDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier, Identifier(className), constructorParameters, ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SeparatedList(new ArgumentSyntax[]
-                {
-                    Argument(IdentifierName("rpcClient")),
-                    Argument(IdentifierName("streamingRpcClient")),
-                    Argument(programIdExpression)
-                }))), body);
+            return ConstructorDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier,
+                Identifier(className), constructorParameters,
+                ConstructorInitializer(SyntaxKind.BaseConstructorInitializer,
+                    ArgumentList(SeparatedList(new ArgumentSyntax[]
+                    {
+                        Argument(IdentifierName("rpcClient")), Argument(IdentifierName("streamingRpcClient")),
+                        Argument(programIdExpression)
+                    }))), body);
         }
 
 
@@ -964,7 +1051,9 @@ namespace Solana.Unity.Anchor
                     BaseList(
                         SingletonSeparatedList<BaseTypeSyntax>(
                             SimpleBaseType(GenericName(Identifier("TransactionalBaseClient"),
-                            TypeArgumentList(SingletonSeparatedList<TypeSyntax>(IdentifierName(idl.NamePascalCase + "ErrorKind"))))))))
+                                TypeArgumentList(
+                                    SingletonSeparatedList<TypeSyntax>(
+                                        IdentifierName(idl.NamePascalCase + "ErrorKind"))))))))
                 .WithMembers(List(clientMembers));
         }
 
@@ -985,27 +1074,30 @@ namespace Solana.Unity.Anchor
                         var errValue = InitializerExpression(
                             SyntaxKind.ComplexElementInitializerExpression,
                             SeparatedList<ExpressionSyntax>(
-                                new SyntaxNodeOrToken[]{
-                            LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(val.Code)),
-                            Token(SyntaxKind.CommaToken),
-                            ObjectCreationExpression(
-                                GenericName(Identifier("ProgramError"))
-                                .WithTypeArgumentList(
-                                    TypeArgumentList(
-                                        SingletonSeparatedList<TypeSyntax>(
-                                            IdentifierName(enumName)))),
-                                ArgumentList(
-                                    SeparatedList(
-                                        new []{
-                                        Argument(
-                                            MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                IdentifierName(enumName),
-                                                IdentifierName(val.Name.ToPascalCase()))),
-                                        Argument(
-                                            LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                Literal(val.Msg)))})), default)}));
+                                new SyntaxNodeOrToken[]
+                                {
+                                    LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(val.Code)),
+                                    Token(SyntaxKind.CommaToken), ObjectCreationExpression(
+                                        GenericName(Identifier("ProgramError"))
+                                            .WithTypeArgumentList(
+                                                TypeArgumentList(
+                                                    SingletonSeparatedList<TypeSyntax>(
+                                                        IdentifierName(enumName)))),
+                                        ArgumentList(
+                                            SeparatedList(
+                                                new[]
+                                                {
+                                                    Argument(
+                                                        MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            IdentifierName(enumName),
+                                                            IdentifierName(val.Name.ToPascalCase()))),
+                                                    Argument(
+                                                        LiteralExpression(
+                                                            SyntaxKind.StringLiteralExpression,
+                                                            Literal(val.Msg)))
+                                                })), default)
+                                }));
                         syntaxNodeOrTokens = syntaxNodeOrTokens.Add(errValue);
                         syntaxNodeOrTokens = syntaxNodeOrTokens.Add(Token(SyntaxKind.CommaToken));
                     }
@@ -1014,49 +1106,50 @@ namespace Solana.Unity.Anchor
 
 
             var methodDef = MethodDeclaration(
-                GenericName(
-                    Identifier("Dictionary"))
-                .WithTypeArgumentList(
-                    TypeArgumentList(
-                        SeparatedList<TypeSyntax>(
-                            new SyntaxNodeOrToken[]{
-                                PredefinedType(Token(SyntaxKind.UIntKeyword)),
-                                Token(SyntaxKind.CommaToken),
-                                GenericName(Identifier("ProgramError"))
-                                .WithTypeArgumentList(
-                                    TypeArgumentList(
-                                        SingletonSeparatedList<TypeSyntax>(
-                                            IdentifierName(enumName))))}))),
-                    Identifier("BuildErrorsDictionary"))
-            .WithModifiers(TokenList(new[]{
-                        Token(SyntaxKind.ProtectedKeyword),
-                        Token(SyntaxKind.OverrideKeyword)}))
-            .WithBody(Block(SingletonList<StatementSyntax>(
-                ReturnStatement(
-                    ObjectCreationExpression(
-                        GenericName(Identifier("Dictionary"))
+                    GenericName(
+                            Identifier("Dictionary"))
                         .WithTypeArgumentList(
-                        TypeArgumentList(
+                            TypeArgumentList(
                                 SeparatedList<TypeSyntax>(
-                                    new SyntaxNodeOrToken[]{
-                                        PredefinedType(Token(SyntaxKind.UIntKeyword)),
-                                        Token(SyntaxKind.CommaToken),
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        PredefinedType(Token(SyntaxKind.UIntKeyword)), Token(SyntaxKind.CommaToken),
                                         GenericName(Identifier("ProgramError"))
-                                        .WithTypeArgumentList(
-                                            TypeArgumentList(
-                                                SingletonSeparatedList<TypeSyntax>(
-                                                    IdentifierName(enumName))))}))))
-                    .WithInitializer(
-                        InitializerExpression(
-                            SyntaxKind.CollectionInitializerExpression,
-                            SeparatedList<ExpressionSyntax>(syntaxNodeOrTokens)))))));
+                                            .WithTypeArgumentList(
+                                                TypeArgumentList(
+                                                    SingletonSeparatedList<TypeSyntax>(
+                                                        IdentifierName(enumName))))
+                                    }))),
+                    Identifier("BuildErrorsDictionary"))
+                .WithModifiers(
+                    TokenList(new[] { Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.OverrideKeyword) }))
+                .WithBody(Block(SingletonList<StatementSyntax>(
+                    ReturnStatement(
+                        ObjectCreationExpression(
+                                GenericName(Identifier("Dictionary"))
+                                    .WithTypeArgumentList(
+                                        TypeArgumentList(
+                                            SeparatedList<TypeSyntax>(
+                                                new SyntaxNodeOrToken[]
+                                                {
+                                                    PredefinedType(Token(SyntaxKind.UIntKeyword)),
+                                                    Token(SyntaxKind.CommaToken),
+                                                    GenericName(Identifier("ProgramError"))
+                                                        .WithTypeArgumentList(
+                                                            TypeArgumentList(
+                                                                SingletonSeparatedList<TypeSyntax>(
+                                                                    IdentifierName(enumName))))
+                                                }))))
+                            .WithInitializer(
+                                InitializerExpression(
+                                    SyntaxKind.CollectionInitializerExpression,
+                                    SeparatedList<ExpressionSyntax>(syntaxNodeOrTokens)))))));
 
             return methodDef;
         }
-        
+
         private IEnumerable<MemberDeclarationSyntax> GenerateInstructionBuilderMethods(Idl idl)
         {
-            
             List<MemberDeclarationSyntax> methods = new();
 
             foreach (var instr in idl.Instructions)
@@ -1073,28 +1166,37 @@ namespace Solana.Unity.Anchor
             List<ArgumentSyntax> arguments = new();
 
 
-            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address) ? null :
-                EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
+            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address)
+                ? null
+                : EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression));
 
-            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName(instr.Name.ToPascalCase() + "Accounts"), Identifier("accounts"), null));
+            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(),
+                IdentifierName(instr.Name.ToPascalCase() + "Accounts"), Identifier("accounts"), null));
             arguments.Add(Argument(IdentifierName("accounts")));
 
             foreach (var arg in instr.Args)
             {
-                parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), GetTypeSyntax(arg.Type), Identifier(GetNormalizedName(arg.Name)), null));
+                parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), GetTypeSyntax(arg.Type),
+                    Identifier(GetNormalizedName(arg.Name)), null));
                 arguments.Add(Argument(IdentifierName(GetNormalizedName(arg.Name))));
-
             }
 
-            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"), Identifier("feePayer"), null));
+            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"),
+                Identifier("feePayer"), null));
             //arguments.Add(Argument(IdentifierName("feePayer")));
-            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), GenericName(Identifier("Func"), TypeArgumentList(SeparatedList(new TypeSyntax[] {
-                ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier(SeparatedList<ExpressionSyntax>()))),
-                IdentifierName("PublicKey"),
-                ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier(SeparatedList<ExpressionSyntax>())))
-            }))), Identifier("signingCallback"), null));
+            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(),
+                GenericName(Identifier("Func"),
+                    TypeArgumentList(SeparatedList(new TypeSyntax[]
+                    {
+                        ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)),
+                            SingletonList(ArrayRankSpecifier(SeparatedList<ExpressionSyntax>()))),
+                        IdentifierName("PublicKey"),
+                        ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)),
+                            SingletonList(ArrayRankSpecifier(SeparatedList<ExpressionSyntax>())))
+                    }))), Identifier("signingCallback"), null));
 
-            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"), Identifier("programId"), defaultProgram));
+            parameters.Add(Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("PublicKey"),
+                Identifier("programId"), defaultProgram));
             arguments.Add(Argument(IdentifierName("programId")));
 
 
@@ -1102,44 +1204,49 @@ namespace Solana.Unity.Anchor
             if (!string.IsNullOrEmpty(idl.Address))
             {
                 var pkInit = ExpressionStatement(
-                AssignmentExpression(
-                    SyntaxKind.CoalesceAssignmentExpression,
-                    IdentifierName("programId"),
-                    ImplicitObjectCreationExpression(
-                        ArgumentList(
-                            SingletonSeparatedList(
-                                Argument(LiteralExpression(
+                    AssignmentExpression(
+                        SyntaxKind.CoalesceAssignmentExpression,
+                        IdentifierName("programId"),
+                        ImplicitObjectCreationExpression(
+                            ArgumentList(
+                                SingletonSeparatedList(
+                                    Argument(LiteralExpression(
                                         SyntaxKind.StringLiteralExpression,
                                         Literal(idl.Address))))), default)));
                 body.Add(pkInit);
             }
 
 
-            body.Add(LocalDeclarationStatement(VariableDeclaration(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
+            body.Add(LocalDeclarationStatement(VariableDeclaration(QualifiedName(QualifiedName(
+                        QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
                         IdentifierName("Models")),
-                IdentifierName("TransactionInstruction")),
+                    IdentifierName("TransactionInstruction")),
                 SingletonSeparatedList(VariableDeclarator(
                     Identifier("instr"),
                     null,
                     EqualsValueClause(InvocationExpression(
-                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Program"), IdentifierName(idl.Name.ToPascalCase() + "Program")), IdentifierName(instr.Name.ToPascalCase())),
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Program"),
+                                IdentifierName(idl.Name.ToPascalCase() + "Program")),
+                            IdentifierName(instr.Name.ToPascalCase())),
                         ArgumentList(SeparatedList(arguments)))))))));
 
 
-            body.Add(ReturnStatement(AwaitExpression(InvocationExpression(IdentifierName("SignAndSendTransaction"), ArgumentList(SeparatedList(new ArgumentSyntax[]
-            {
-                Argument(IdentifierName("instr")),
-                Argument(IdentifierName("feePayer")),
-                Argument(IdentifierName("signingCallback"))
-            }))))));
-
+            body.Add(ReturnStatement(AwaitExpression(InvocationExpression(IdentifierName("SignAndSendTransaction"),
+                ArgumentList(SeparatedList(new ArgumentSyntax[]
+                {
+                    Argument(IdentifierName("instr")), Argument(IdentifierName("feePayer")),
+                    Argument(IdentifierName("signingCallback"))
+                }))))));
 
 
             return MethodDeclaration(
                 List<AttributeListSyntax>(),
                 ClientGeneratorDefaultValues.PublicAwaitModifiers,
                 GenericName(Identifier("Task"), TypeArgumentList(SingletonSeparatedList<TypeSyntax>(
-                    GenericName(Identifier("RequestResult"), TypeArgumentList(SingletonSeparatedList<TypeSyntax>(PredefinedType(Token(SyntaxKind.StringKeyword)))))))),
+                    GenericName(Identifier("RequestResult"),
+                        TypeArgumentList(
+                            SingletonSeparatedList<TypeSyntax>(PredefinedType(Token(SyntaxKind.StringKeyword)))))))),
                 null,
                 Identifier("Send" + instr.Name.ToPascalCase() + "Async"),
                 null,
@@ -1151,8 +1258,10 @@ namespace Solana.Unity.Anchor
 
         private SimpleNameSyntax Generic(string generic, string t)
         {
-            return GenericName(Identifier(generic), TypeArgumentList(SingletonSeparatedList<TypeSyntax>(IdentifierName(t))));
+            return GenericName(Identifier(generic),
+                TypeArgumentList(SingletonSeparatedList<TypeSyntax>(IdentifierName(t))));
         }
+
         private SimpleNameSyntax Generic(string generic, TypeSyntax t)
         {
             return GenericName(Identifier(generic), TypeArgumentList(SingletonSeparatedList(t)));
@@ -1171,15 +1280,15 @@ namespace Solana.Unity.Anchor
                 Block(
                     LocalDeclarationStatement(
                         VariableDeclaration(
-                            IdentifierName(typeNameClass))
-                        .WithVariables(
-                            SingletonSeparatedList<VariableDeclaratorSyntax>(
-                                VariableDeclarator(
-                                    Identifier("parsingResult"))
-                                .WithInitializer(
-                                    EqualsValueClause(
-                                        LiteralExpression(
-                                            SyntaxKind.NullLiteralExpression)))))),
+                                IdentifierName(typeNameClass))
+                            .WithVariables(
+                                SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                    VariableDeclarator(
+                                            Identifier("parsingResult"))
+                                        .WithInitializer(
+                                            EqualsValueClause(
+                                                LiteralExpression(
+                                                    SyntaxKind.NullLiteralExpression)))))),
                     IfStatement(
                         BinaryExpression(
                             SyntaxKind.GreaterThanExpression,
@@ -1201,150 +1310,156 @@ namespace Solana.Unity.Anchor
                                 SyntaxKind.SimpleAssignmentExpression,
                                 IdentifierName("parsingResult"),
                                 InvocationExpression(
-                                    MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        IdentifierName(typeNameClass),
-                                        IdentifierName("Deserialize")))
-                                .WithArgumentList(
-                                    ArgumentList(
-                                        SingletonSeparatedList<ArgumentSyntax>(
-                                            Argument(
-                                                InvocationExpression(
-                                                    MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        IdentifierName("Convert"),
-                                                        IdentifierName("FromBase64String")))
-                                                .WithArgumentList(
-                                                    ArgumentList(
-                                                        SingletonSeparatedList<ArgumentSyntax>(
-                                                            Argument(
-                                                                ElementAccessExpression(
-                                                                    MemberAccessExpression(
-                                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                                        MemberAccessExpression(
-                                                                            SyntaxKind.SimpleMemberAccessExpression,
-                                                                            IdentifierName("e"),
-                                                                            IdentifierName("Value")),
-                                                                        IdentifierName("Data")))
-                                                                .WithArgumentList(
-                                                                    BracketedArgumentList(
-                                                                        SingletonSeparatedList<ArgumentSyntax>(
-                                                                            Argument(
-                                                                                LiteralExpression(
-                                                                                    SyntaxKind.NumericLiteralExpression,
-                                                                                    Literal(0))))))))))))))))),
+                                        MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            IdentifierName(typeNameClass),
+                                            IdentifierName("Deserialize")))
+                                    .WithArgumentList(
+                                        ArgumentList(
+                                            SingletonSeparatedList<ArgumentSyntax>(
+                                                Argument(
+                                                    InvocationExpression(
+                                                            MemberAccessExpression(
+                                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                                IdentifierName("Convert"),
+                                                                IdentifierName("FromBase64String")))
+                                                        .WithArgumentList(
+                                                            ArgumentList(
+                                                                SingletonSeparatedList<ArgumentSyntax>(
+                                                                    Argument(
+                                                                        ElementAccessExpression(
+                                                                                MemberAccessExpression(
+                                                                                    SyntaxKind
+                                                                                        .SimpleMemberAccessExpression,
+                                                                                    MemberAccessExpression(
+                                                                                        SyntaxKind
+                                                                                            .SimpleMemberAccessExpression,
+                                                                                        IdentifierName("e"),
+                                                                                        IdentifierName("Value")),
+                                                                                    IdentifierName("Data")))
+                                                                            .WithArgumentList(
+                                                                                BracketedArgumentList(
+                                                                                    SingletonSeparatedList<
+                                                                                        ArgumentSyntax>(
+                                                                                        Argument(
+                                                                                            LiteralExpression(
+                                                                                                SyntaxKind
+                                                                                                    .NumericLiteralExpression,
+                                                                                                Literal(
+                                                                                                    0))))))))))))))))),
                     ExpressionStatement(
                         InvocationExpression(
-                            IdentifierName("callback"))
-                        .WithArgumentList(
-                            ArgumentList(
-                                SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]{
-                                        Argument(
-                                            IdentifierName("s")),
-                                        Token(SyntaxKind.CommaToken),
-                                        Argument(
-                                            IdentifierName("e")),
-                                        Token(SyntaxKind.CommaToken),
-                                        Argument(
-                                            IdentifierName("parsingResult"))})))));
+                                IdentifierName("callback"))
+                            .WithArgumentList(
+                                ArgumentList(
+                                    SeparatedList<ArgumentSyntax>(
+                                        new SyntaxNodeOrToken[]
+                                        {
+                                            Argument(
+                                                IdentifierName("s")),
+                                            Token(SyntaxKind.CommaToken), Argument(
+                                                IdentifierName("e")),
+                                            Token(SyntaxKind.CommaToken), Argument(
+                                                IdentifierName("parsingResult"))
+                                        })))));
 
             var subscriptionStateDeclaration =
                 LocalDeclarationStatement(
                     VariableDeclaration(
-                        IdentifierName("SubscriptionState"))
-                    .WithVariables(
-                        SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            VariableDeclarator(
-                                Identifier("res"))
-                            .WithInitializer(
-                                EqualsValueClause(
-                                    AwaitExpression(
-                                        InvocationExpression(
-                                            MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                IdentifierName("StreamingRpcClient"),
-                                                IdentifierName("SubscribeAccountInfoAsync")))
-                                        .WithArgumentList(
-                                            ArgumentList(
-                                                SeparatedList<ArgumentSyntax>(
-                                                    new SyntaxNodeOrToken[]{
-                                                        Argument(
-                                                            IdentifierName("accountAddress")),
-                                                        Token(SyntaxKind.CommaToken),
-                                                        Argument(
-                                                            ParenthesizedLambdaExpression()
-                                                            .WithParameterList(
-                                                                ParameterList(
-                                                                    SeparatedList<ParameterSyntax>(
-                                                                        new SyntaxNodeOrToken[]{
-                                                                            Parameter(
-                                                                                Identifier("s")),
-                                                                            Token(SyntaxKind.CommaToken),
-                                                                            Parameter(
-                                                                                Identifier("e"))})))
-                                                            .WithBlock(callbackBody)),
-                                                        Token(SyntaxKind.CommaToken),
-                                                        Argument(
-                                                            IdentifierName("commitment"))})))))))));
+                            IdentifierName("SubscriptionState"))
+                        .WithVariables(
+                            SingletonSeparatedList<VariableDeclaratorSyntax>(
+                                VariableDeclarator(
+                                        Identifier("res"))
+                                    .WithInitializer(
+                                        EqualsValueClause(
+                                            AwaitExpression(
+                                                InvocationExpression(
+                                                        MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            IdentifierName("StreamingRpcClient"),
+                                                            IdentifierName("SubscribeAccountInfoAsync")))
+                                                    .WithArgumentList(
+                                                        ArgumentList(
+                                                            SeparatedList<ArgumentSyntax>(
+                                                                new SyntaxNodeOrToken[]
+                                                                {
+                                                                    Argument(
+                                                                        IdentifierName("accountAddress")),
+                                                                    Token(SyntaxKind.CommaToken), Argument(
+                                                                        ParenthesizedLambdaExpression()
+                                                                            .WithParameterList(
+                                                                                ParameterList(
+                                                                                    SeparatedList<ParameterSyntax>(
+                                                                                        new SyntaxNodeOrToken[]
+                                                                                        {
+                                                                                            Parameter(
+                                                                                                Identifier("s")),
+                                                                                            Token(SyntaxKind
+                                                                                                .CommaToken),
+                                                                                            Parameter(
+                                                                                                Identifier("e"))
+                                                                                        })))
+                                                                            .WithBlock(callbackBody)),
+                                                                    Token(SyntaxKind.CommaToken), Argument(
+                                                                        IdentifierName("commitment"))
+                                                                })))))))));
 
 
             var methodDeclaration = MethodDeclaration(
-                        GenericName(
+                    GenericName(
                             Identifier("Task"))
                         .WithTypeArgumentList(
                             TypeArgumentList(
                                 SingletonSeparatedList<TypeSyntax>(
                                     IdentifierName("SubscriptionState")))),
-                        Identifier("Subscribe" + type.Name.ToPascalCase() + "Async"))
-                    .WithModifiers(
-                        TokenList(
-                            new[]{
-                                Token(SyntaxKind.PublicKeyword),
-                                Token(SyntaxKind.AsyncKeyword)}))
-                    .WithParameterList(
-                        ParameterList(
-                            SeparatedList<ParameterSyntax>(
-                                new SyntaxNodeOrToken[]{
-                                    Parameter(
+                    Identifier("Subscribe" + type.Name.ToPascalCase() + "Async"))
+                .WithModifiers(
+                    TokenList(
+                        new[] { Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.AsyncKeyword) }))
+                .WithParameterList(
+                    ParameterList(
+                        SeparatedList<ParameterSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                Parameter(
                                         Identifier("accountAddress"))
                                     .WithType(
                                         PredefinedType(
                                             Token(SyntaxKind.StringKeyword))),
-                                    Token(SyntaxKind.CommaToken),
-                                    Parameter(
+                                Token(SyntaxKind.CommaToken), Parameter(
                                         Identifier("callback"))
                                     .WithType(
                                         GenericName(
-                                            Identifier("Action"))
-                                        .WithTypeArgumentList(
-                                            TypeArgumentList(
-                                                SeparatedList<TypeSyntax>(
-                                                    new SyntaxNodeOrToken[]{
-                                                        IdentifierName("SubscriptionState"),
-                                                        Token(SyntaxKind.CommaToken),
-                                                        QualifiedName(
-                                                            QualifiedName(
+                                                Identifier("Action"))
+                                            .WithTypeArgumentList(
+                                                TypeArgumentList(
+                                                    SeparatedList<TypeSyntax>(
+                                                        new SyntaxNodeOrToken[]
+                                                        {
+                                                            IdentifierName("SubscriptionState"),
+                                                            Token(SyntaxKind.CommaToken), QualifiedName(
                                                                 QualifiedName(
-                                                                    IdentifierName("Solana.Unity"),
-                                                                    IdentifierName("Rpc")),
-                                                                IdentifierName("Messages")),
-                                                            GenericName(
-                                                                Identifier("ResponseValue"))
-                                                            .WithTypeArgumentList(
-                                                                TypeArgumentList(
-                                                                    SingletonSeparatedList<TypeSyntax>(
-                                                                        QualifiedName(
-                                                                            QualifiedName(
+                                                                    QualifiedName(
+                                                                        IdentifierName("Solana.Unity"),
+                                                                        IdentifierName("Rpc")),
+                                                                    IdentifierName("Messages")),
+                                                                GenericName(
+                                                                        Identifier("ResponseValue"))
+                                                                    .WithTypeArgumentList(
+                                                                        TypeArgumentList(
+                                                                            SingletonSeparatedList<TypeSyntax>(
                                                                                 QualifiedName(
-                                                                                    IdentifierName("Solana.Unity"),
-                                                                                    IdentifierName("Rpc")),
-                                                                                IdentifierName("Models")),
-                                                                            IdentifierName("AccountInfo")))))),
-                                                        Token(SyntaxKind.CommaToken),
-                                                        IdentifierName(typeNameClass)})))),
-                                    Token(SyntaxKind.CommaToken),
-                                    Parameter(
+                                                                                    QualifiedName(
+                                                                                        QualifiedName(
+                                                                                            IdentifierName(
+                                                                                                "Solana.Unity"),
+                                                                                            IdentifierName("Rpc")),
+                                                                                        IdentifierName("Models")),
+                                                                                    IdentifierName("AccountInfo")))))),
+                                                            Token(SyntaxKind.CommaToken), IdentifierName(typeNameClass)
+                                                        })))),
+                                Token(SyntaxKind.CommaToken), Parameter(
                                         Identifier("commitment"))
                                     .WithType(
                                         IdentifierName("Commitment"))
@@ -1353,15 +1468,16 @@ namespace Solana.Unity.Anchor
                                             MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
                                                 IdentifierName("Commitment"),
-                                                IdentifierName("Finalized"))))})));
+                                                IdentifierName("Finalized"))))
+                            })));
 
             return methodDeclaration
-                    .WithBody(
-                        Block(
-                            subscriptionStateDeclaration,
-                            ReturnStatement(
-                                IdentifierName("res")))
-                    );
+                .WithBody(
+                    Block(
+                        subscriptionStateDeclaration,
+                        ReturnStatement(
+                            IdentifierName("res")))
+                );
         }
 
         private MemberDeclarationSyntax GenerateGetAccount(IIdlTypeDefinitionTy type, Idl idl)
@@ -1383,68 +1499,84 @@ namespace Solana.Unity.Anchor
                             IdentifierName("RpcClient"),
                             IdentifierName("GetAccountInfoAsync")),
                         ArgumentList(SeparatedList(new ArgumentSyntax[]
-                        {
-                            Argument(IdentifierName("accountAddress")),
-                            Argument(IdentifierName("commitment"))
-                        }
+                            {
+                                Argument(IdentifierName("accountAddress")), Argument(IdentifierName("commitment"))
+                            }
                         ))))))))));
 
             var condition =
-                    PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"), IdentifierName("WasSuccessful")));
+                PrefixUnaryExpression(SyntaxKind.LogicalNotExpression,
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"),
+                        IdentifierName("WasSuccessful")));
 
 
-            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("AccountResultWrapper", typeNameClass)),
-                       ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
+            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(
+                    QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")),
+                        IdentifierName("Models")),
+                    Generic("AccountResultWrapper", typeNameClass)),
+                ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
 
             body.Add(IfStatement(condition, ifBody));
 
             var convertArg = ElementAccessExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"), IdentifierName("Result")), IdentifierName("Value")), IdentifierName("Data")),
-                                BracketedArgumentList(SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))));
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"),
+                            IdentifierName("Result")), IdentifierName("Value")), IdentifierName("Data")),
+                BracketedArgumentList(
+                    SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                        Literal(0))))));
 
-            var convert = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Convert"), IdentifierName("FromBase64String")),
-                            ArgumentList(SingletonSeparatedList(Argument(convertArg))));
+            var convert = InvocationExpression(
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Convert"),
+                    IdentifierName("FromBase64String")),
+                ArgumentList(SingletonSeparatedList(Argument(convertArg))));
 
-            var desser = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeNameClass), IdentifierName("Deserialize")),
-                            ArgumentList(SingletonSeparatedList(Argument(convert))));
+            var desser = InvocationExpression(
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeNameClass),
+                    IdentifierName("Deserialize")),
+                ArgumentList(SingletonSeparatedList(Argument(convert))));
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName("var"),
-                SingletonSeparatedList(VariableDeclarator(Identifier("resultingAccount"), null, EqualsValueClause(desser))))));
+                SingletonSeparatedList(VariableDeclarator(Identifier("resultingAccount"), null,
+                    EqualsValueClause(desser))))));
 
-            var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("AccountResultWrapper", typeNameClass)), ArgumentList(SeparatedList(new[]
-                       {
-                           Argument(IdentifierName("res")),
-                           Argument(IdentifierName("resultingAccount"))
-                       })), default);
+            var retVal = ObjectCreationExpression(QualifiedName(
+                    QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")),
+                        IdentifierName("Models")),
+                    Generic("AccountResultWrapper", typeNameClass)),
+                ArgumentList(SeparatedList(new[]
+                {
+                    Argument(IdentifierName("res")), Argument(IdentifierName("resultingAccount"))
+                })), default);
 
             body.Add(ReturnStatement(retVal));
 
             // Solana.Unity.Rpc.Types.Commitment commitment = Commitment.Finalized
-            EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Finalized")));
+            EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Finalized")));
 
             return MethodDeclaration(List<AttributeListSyntax>(),
-                       ClientGeneratorDefaultValues.PublicAwaitModifiers,
-
-                       Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("AccountResultWrapper", typeNameClass)))
-
-,
-                       null,
-                       Identifier("Get" + typeName + "Async"),
-                       null,
-                       ParameterList(SeparatedList(new ParameterSyntax[] {
-                        Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.StringKeyword)), Identifier("accountAddress"), default),
-
-                        Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("Commitment"), Identifier("commitment"), defaultCommitment)
-
-                       })),
-                       List<TypeParameterConstraintClauseSyntax>(),
-                       Block(body),
-                       null);
+                ClientGeneratorDefaultValues.PublicAwaitModifiers,
+                Generic("Task", QualifiedName(
+                    QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")),
+                        IdentifierName("Models")),
+                    Generic("AccountResultWrapper", typeNameClass)))
+                ,
+                null,
+                Identifier("Get" + typeName + "Async"),
+                null,
+                ParameterList(SeparatedList(new ParameterSyntax[]
+                {
+                    Parameter(List<AttributeListSyntax>(), TokenList(),
+                        PredefinedType(Token(SyntaxKind.StringKeyword)), Identifier("accountAddress"), default),
+                    Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("Commitment"),
+                        Identifier("commitment"), defaultCommitment)
+                })),
+                List<TypeParameterConstraintClauseSyntax>(),
+                Block(body),
+                null);
         }
+
         private MemberDeclarationSyntax GenerateGetAccounts(Idl idl, IIdlTypeDefinitionTy type)
         {
             List<StatementSyntax> body = new();
@@ -1455,22 +1587,29 @@ namespace Solana.Unity.Anchor
             {
                 typeNameClass = typeNameClass + ".Accounts." + typeNameClass;
             }
-            
+
             // build memcmp filters
-            var memCmpType = QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")), IdentifierName("Models")), IdentifierName("MemCmp"));
+            var memCmpType =
+                QualifiedName(
+                    QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Rpc")),
+                        IdentifierName("Models")), IdentifierName("MemCmp"));
             var memCmp = ObjectCreationExpression(memCmpType, default,
-                    InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList<ExpressionSyntax>(new[]{
-                        AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
-                            IdentifierName("Bytes"), QualifiedName(IdentifierName(typeNameClass), IdentifierName("ACCOUNT_DISCRIMINATOR_B58"))),
-                        AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
-                            IdentifierName("Offset"), LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))) })));
+                InitializerExpression(SyntaxKind.ObjectInitializerExpression, SeparatedList<ExpressionSyntax>(new[]
+                {
+                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                        IdentifierName("Bytes"),
+                        QualifiedName(IdentifierName(typeNameClass), IdentifierName("ACCOUNT_DISCRIMINATOR_B58"))),
+                    AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                        IdentifierName("Offset"), LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0)))
+                })));
 
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName("var"),
                 SingletonSeparatedList(VariableDeclarator(Identifier("list"), null, EqualsValueClause(
                     ObjectCreationExpression(Generic("List", memCmpType),
-                    default,
-                    InitializerExpression(SyntaxKind.CollectionInitializerExpression, SingletonSeparatedList<ExpressionSyntax>(memCmp))
+                        default,
+                        InitializerExpression(SyntaxKind.CollectionInitializerExpression,
+                            SingletonSeparatedList<ExpressionSyntax>(memCmp))
                     )))))));
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName("var"),
@@ -1481,11 +1620,10 @@ namespace Solana.Unity.Anchor
                             IdentifierName("RpcClient"),
                             IdentifierName("GetProgramAccountsAsync")),
                         ArgumentList(SeparatedList(new ArgumentSyntax[]
-                        {
-                            Argument(IdentifierName("programAddress")),
-                            Argument(IdentifierName("commitment")),
-                            Argument(NameColon(IdentifierName("memCmpList")), default, IdentifierName("list"))
-                        }
+                            {
+                                Argument(IdentifierName("programAddress")), Argument(IdentifierName("commitment")),
+                                Argument(NameColon(IdentifierName("memCmpList")), default, IdentifierName("list"))
+                            }
                         ))))))))));
 
             //if (!res.WasSuccessful || !(res.Result?.Count > 0))
@@ -1493,17 +1631,24 @@ namespace Solana.Unity.Anchor
 
 
             var condition = BinaryExpression(SyntaxKind.LogicalOrExpression,
-                    PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"), IdentifierName("WasSuccessful"))),
-                    PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, ParenthesizedExpression(BinaryExpression(SyntaxKind.GreaterThanExpression,
-                        ConditionalAccessExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"), IdentifierName("Result")),
-                            MemberBindingExpression(IdentifierName("Count"))),
-                        LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))));
+                PrefixUnaryExpression(SyntaxKind.LogicalNotExpression,
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"),
+                        IdentifierName("WasSuccessful"))),
+                PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, ParenthesizedExpression(BinaryExpression(
+                    SyntaxKind.GreaterThanExpression,
+                    ConditionalAccessExpression(
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"),
+                            IdentifierName("Result")),
+                        MemberBindingExpression(IdentifierName("Count"))),
+                    LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))));
 
             //new Solana.Unity.Programs.Models.ProgramAccountsResultWrapper<List<Reserve>>(res);
 
-            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))),
-                       ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
+            var ifBody = ReturnStatement(ObjectCreationExpression(QualifiedName(
+                    QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")),
+                        IdentifierName("Models")),
+                    Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))),
+                ArgumentList(SingletonSeparatedList<ArgumentSyntax>(Argument(IdentifierName("res")))), default));
 
             body.Add(IfStatement(condition, ifBody));
 
@@ -1513,76 +1658,92 @@ namespace Solana.Unity.Anchor
                 DeserializeAccount<T>(Convert.FromBase64String(result.Account.Data[0]))));
 
             return new ProgramAccountsResultWrapper<List<T>>(res, resultingAccounts);
-             * 
+             *
              */
 
             var listInitialCapacity = MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                                    IdentifierName("res"), IdentifierName("Result")),
-                                IdentifierName("Count"));
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName("res"), IdentifierName("Result")),
+                IdentifierName("Count"));
 
             var listType = Generic("List", typeNameClass);
 
             body.Add(LocalDeclarationStatement(VariableDeclaration(listType,
                 SingletonSeparatedList(VariableDeclarator(Identifier("resultingAccounts"), default,
-                        EqualsValueClause(ObjectCreationExpression(listType,
-                            ArgumentList(SingletonSeparatedList(Argument(listInitialCapacity))),
-                            default)))))));
+                    EqualsValueClause(ObjectCreationExpression(listType,
+                        ArgumentList(SingletonSeparatedList(Argument(listInitialCapacity))),
+                        default)))))));
 
             var convertArg = ElementAccessExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"), IdentifierName("Account")), IdentifierName("Data")),
-                                BracketedArgumentList(SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))));
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"),
+                        IdentifierName("Account")), IdentifierName("Data")),
+                BracketedArgumentList(
+                    SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                        Literal(0))))));
 
-            var convert = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Convert"), IdentifierName("FromBase64String")),
-                            ArgumentList(SingletonSeparatedList(Argument(convertArg))));
+            var convert = InvocationExpression(
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Convert"),
+                    IdentifierName("FromBase64String")),
+                ArgumentList(SingletonSeparatedList(Argument(convertArg))));
 
-            var desser = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeNameClass), IdentifierName("Deserialize")),
-                            ArgumentList(SingletonSeparatedList(Argument(convert))));
+            var desser = InvocationExpression(
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(typeNameClass),
+                    IdentifierName("Deserialize")),
+                ArgumentList(SingletonSeparatedList(Argument(convert))));
 
             var lambda = SimpleLambdaExpression(Parameter(Identifier("result")), desser);
 
             var selectCall = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"), IdentifierName("Result")), IdentifierName("Select")),
-                            ArgumentList(SingletonSeparatedList(Argument(lambda))));
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("res"),
+                        IdentifierName("Result")), IdentifierName("Select")),
+                ArgumentList(SingletonSeparatedList(Argument(lambda))));
 
 
+            body.Add(ExpressionStatement(InvocationExpression(
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("resultingAccounts"),
+                    IdentifierName("AddRange")),
+                ArgumentList(SingletonSeparatedList(Argument(selectCall))))));
 
-            body.Add(ExpressionStatement(InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("resultingAccounts"), IdentifierName("AddRange")),
-                            ArgumentList(SingletonSeparatedList(Argument(selectCall))))));
-
-            var retVal = ObjectCreationExpression(QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))), ArgumentList(SeparatedList(new[]
-                       {
-                           Argument(IdentifierName("res")),
-                           Argument(IdentifierName("resultingAccounts"))
-                       })), default);
+            var retVal = ObjectCreationExpression(QualifiedName(
+                    QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")),
+                        IdentifierName("Models")),
+                    Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))),
+                ArgumentList(SeparatedList(new[]
+                {
+                    Argument(IdentifierName("res")), Argument(IdentifierName("resultingAccounts"))
+                })), default);
 
             body.Add(ReturnStatement(retVal));
 
             // Solana.Unity.Rpc.Types.Commitment commitment = Commitment.Finalized
 
-            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address) ? null : EqualsValueClause(IdentifierName($"{idl.NamePascalCase}Program.ID"));
-            EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Confirmed")));
+            EqualsValueClauseSyntax defaultProgram = string.IsNullOrEmpty(idl.Address)
+                ? null
+                : EqualsValueClause(IdentifierName($"{idl.NamePascalCase}Program.ID"));
+            EqualsValueClauseSyntax defaultCommitment = EqualsValueClause(MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Commitment"), IdentifierName("Confirmed")));
 
             return MethodDeclaration(List<AttributeListSyntax>(),
-                       ClientGeneratorDefaultValues.PublicAwaitModifiers,
-
-                       Generic("Task", QualifiedName(QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")), IdentifierName("Models")),
-                       Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))))
-
-,
-                       null,
-                       Identifier("Get" + typeName + "sAsync"),
-                       null,
-                       ParameterList(SeparatedList(new ParameterSyntax[] {
-                        Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.StringKeyword)), Identifier("programAddress"), defaultProgram),
-
-                        Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("Commitment"), Identifier("commitment"), defaultCommitment)
-
-                       })),
-                       List<TypeParameterConstraintClauseSyntax>(),
-                       Block(body),
-                       null);
+                ClientGeneratorDefaultValues.PublicAwaitModifiers,
+                Generic("Task", QualifiedName(
+                    QualifiedName(QualifiedName(IdentifierName("Solana.Unity"), IdentifierName("Programs")),
+                        IdentifierName("Models")),
+                    Generic("ProgramAccountsResultWrapper", Generic("List", typeNameClass))))
+                ,
+                null,
+                Identifier("Get" + typeName + "sAsync"),
+                null,
+                ParameterList(SeparatedList(new ParameterSyntax[]
+                {
+                    Parameter(List<AttributeListSyntax>(), TokenList(),
+                        PredefinedType(Token(SyntaxKind.StringKeyword)), Identifier("programAddress"),
+                        defaultProgram),
+                    Parameter(List<AttributeListSyntax>(), TokenList(), IdentifierName("Commitment"),
+                        Identifier("commitment"), defaultCommitment)
+                })),
+                List<TypeParameterConstraintClauseSyntax>(),
+                Block(body),
+                null);
         }
 
         private List<MemberDeclarationSyntax> GenerateGetAccounts(Idl idl)
@@ -1610,7 +1771,8 @@ namespace Solana.Unity.Anchor
                     types.AddRange(GenerateTypeDeclaration(idl, t, true));
             }
 
-            return NamespaceDeclaration(IdentifierName("Types"), List<ExternAliasDirectiveSyntax>(), List<UsingDirectiveSyntax>(), List(types));
+            return NamespaceDeclaration(IdentifierName("Types"), List<ExternAliasDirectiveSyntax>(),
+                List<UsingDirectiveSyntax>(), List(types));
         }
 
         private bool IsTypeReferenced(Idl idl, IIdlTypeDefinitionTy idlTypeDefinitionTy)
@@ -1631,43 +1793,46 @@ namespace Solana.Unity.Anchor
         }
 
         private bool IsTypeReferenced(IIdlTypeDefinitionTy typeToCheck, string typeName)
-        => typeToCheck switch
-        {
-            StructIdlTypeDefinition structIdl => IsTypeReferenced(structIdl, typeName),
-            EnumIdlTypeDefinition enumIdl => IsTypeReferenced(enumIdl, typeName),
-            _ => false
-        };
+            => typeToCheck switch
+            {
+                StructIdlTypeDefinition structIdl => IsTypeReferenced(structIdl, typeName),
+                EnumIdlTypeDefinition enumIdl => IsTypeReferenced(enumIdl, typeName),
+                _ => false
+            };
 
         private bool IsTypeReferenced(StructIdlTypeDefinition type, string typeName)
-        => type.Fields.Any(f => IsTypeReferenced(f.Type, typeName));
+            => type.Fields.Any(f => IsTypeReferenced(f.Type, typeName));
 
         private bool IsTypeReferenced(EnumIdlTypeDefinition type, string typeName)
-        => type.Variants.Any(v => v switch
-        {
-            NamedFieldsEnumVariant named => IsTypeReferenced(named, typeName),
-            TupleFieldsEnumVariant tuple => IsTypeReferenced(tuple, typeName),
-            _ => false
-        });
+            => type.Variants.Any(v => v switch
+            {
+                NamedFieldsEnumVariant named => IsTypeReferenced(named, typeName),
+                TupleFieldsEnumVariant tuple => IsTypeReferenced(tuple, typeName),
+                _ => false
+            });
 
         private bool IsTypeReferenced(NamedFieldsEnumVariant variant, string typeName)
-        => variant.Fields.Any(f => IsTypeReferenced(f.Type, typeName));
+            => variant.Fields.Any(f => IsTypeReferenced(f.Type, typeName));
+
         private bool IsTypeReferenced(TupleFieldsEnumVariant variant, string typeName)
-        => variant.Fields.Any(f => IsTypeReferenced(f, typeName));
+            => variant.Fields.Any(f => IsTypeReferenced(f, typeName));
 
         private bool IsTypeReferenced(IIdlType type, string typeName)
-        => type switch
-        {
-            IdlDefined t => t.TypeName == typeName,
-            IdlArray arr => IsTypeReferenced(arr.ValuesType, typeName),
-            IdlOptional opt => IsTypeReferenced(opt.ValuesType, typeName),
-            _ => false
-        };
+            => type switch
+            {
+                IdlDefined t => t.TypeName == typeName,
+                IdlArray arr => IsTypeReferenced(arr.ValuesType, typeName),
+                IdlOptional opt => IsTypeReferenced(opt.ValuesType, typeName),
+                _ => false
+            };
 
 
-        private SyntaxList<MemberDeclarationSyntax> GenerateTypeDeclaration(Idl idl, IIdlTypeDefinitionTy idlTypeDefinitionTy, bool generateSerialization, bool isAccount = false)
+        private SyntaxList<MemberDeclarationSyntax> GenerateTypeDeclaration(Idl idl,
+            IIdlTypeDefinitionTy idlTypeDefinitionTy, bool generateSerialization, bool isAccount = false)
             => idlTypeDefinitionTy switch
             {
-                StructIdlTypeDefinition structIdl => GenerateClassDeclaration(idl, structIdl, generateSerialization, isAccount),
+                StructIdlTypeDefinition structIdl => GenerateClassDeclaration(idl, structIdl, generateSerialization,
+                    isAccount),
                 EnumIdlTypeDefinition enumIdl => GenerateEnumDeclaration(idl, enumIdl, generateSerialization),
                 _ => throw new Exception("bad type")
             };
@@ -1690,14 +1855,18 @@ namespace Solana.Unity.Anchor
                 _ => throw new Exception("Unexpected Type.")
             };
 
-        private IdentifierNameSyntax SetTupleSyntax(IIdlType[] typeList){
+        private IdentifierNameSyntax SetTupleSyntax(IIdlType[] typeList)
+        {
             var tupleString = "(";
             var someBool = false;
-            foreach (var type in typeList) {
-                if(someBool){ tupleString+=","; }
+            foreach (var type in typeList)
+            {
+                if (someBool) { tupleString += ","; }
+
                 tupleString += GetTypeSyntax(type).ToString();
-                someBool=true;
+                someBool = true;
             }
+
             tupleString += ")";
             return IdentifierName(tupleString);
         }
@@ -1723,9 +1892,12 @@ namespace Solana.Unity.Anchor
         {
             var members = new List<MemberDeclarationSyntax>();
 
-            members.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers,
+            members.Add(PropertyDeclaration(List<AttributeListSyntax>(),
+                ClientGeneratorDefaultValues.PublicStaticModifiers,
                 PredefinedType(Token(SyntaxKind.ULongKeyword)), default, Identifier("ACCOUNT_DISCRIMINATOR"), default,
-                ArrowExpressionClause(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(SigHash.GetAccountSignatureHash(structIdl.Name)))), default, Token(SyntaxKind.SemicolonToken)));
+                ArrowExpressionClause(LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                    Literal(SigHash.GetAccountSignatureHash(structIdl.Name)))), default,
+                Token(SyntaxKind.SemicolonToken)));
 
             var sigHash = SigHash.GetAccountSignatureHash(structIdl.Name);
             var buffer = new byte[8];
@@ -1740,25 +1912,33 @@ namespace Solana.Unity.Anchor
 
             List<ExpressionSyntax> init = new();
 
-            var b58 =  Encoders.Base58.EncodeData(buffer);
+            var b58 = Encoders.Base58.EncodeData(buffer);
 
             foreach (var b in buffer)
                 init.Add(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(b)));
 
-            members.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers,
-                Generic("ReadOnlySpan", PredefinedType(Token(SyntaxKind.ByteKeyword))), default, Identifier("ACCOUNT_DISCRIMINATOR_BYTES"), default,
+            members.Add(PropertyDeclaration(List<AttributeListSyntax>(),
+                ClientGeneratorDefaultValues.PublicStaticModifiers,
+                Generic("ReadOnlySpan", PredefinedType(Token(SyntaxKind.ByteKeyword))), default,
+                Identifier("ACCOUNT_DISCRIMINATOR_BYTES"), default,
                 ArrowExpressionClause(
-                    ArrayCreationExpression(ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier())), InitializerExpression(SyntaxKind.ArrayInitializerExpression, SeparatedList(init)))),
+                    ArrayCreationExpression(
+                        ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier())),
+                        InitializerExpression(SyntaxKind.ArrayInitializerExpression, SeparatedList(init)))),
                 default, Token(SyntaxKind.SemicolonToken)));
 
-            members.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicStaticModifiers,
-                PredefinedType(Token(SyntaxKind.StringKeyword)), default, Identifier("ACCOUNT_DISCRIMINATOR_B58"), default,
-                ArrowExpressionClause(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(b58))), default, Token(SyntaxKind.SemicolonToken)));
+            members.Add(PropertyDeclaration(List<AttributeListSyntax>(),
+                ClientGeneratorDefaultValues.PublicStaticModifiers,
+                PredefinedType(Token(SyntaxKind.StringKeyword)), default, Identifier("ACCOUNT_DISCRIMINATOR_B58"),
+                default,
+                ArrowExpressionClause(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(b58))), default,
+                Token(SyntaxKind.SemicolonToken)));
 
             return members;
         }
 
-        private SyntaxList<MemberDeclarationSyntax> GenerateClassDeclaration(Idl idl, StructIdlTypeDefinition structIdl, bool generateSerialization, bool isAccount = false)
+        private SyntaxList<MemberDeclarationSyntax> GenerateClassDeclaration(Idl idl, StructIdlTypeDefinition structIdl,
+            bool generateSerialization, bool isAccount = false)
         {
             List<MemberDeclarationSyntax> classMembers = new();
 
@@ -1772,21 +1952,28 @@ namespace Solana.Unity.Anchor
                     field.Name = field.Name + "Field";
                 }
 
-                classMembers.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier, GetTypeSyntax(field.Type), default, Identifier(field.Name.ToPascalCase()), ClientGeneratorDefaultValues.PropertyAccessorList));
+                classMembers.Add(PropertyDeclaration(List<AttributeListSyntax>(),
+                    ClientGeneratorDefaultValues.PublicModifier, GetTypeSyntax(field.Type), default,
+                    Identifier(field.Name.ToPascalCase()), ClientGeneratorDefaultValues.PropertyAccessorList));
             }
 
             if (generateSerialization)
             {
                 List<StatementSyntax> serializationBody = new();
-                serializationBody.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)), SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null, EqualsValueClause(IdentifierName("initialOffset")))))));
+                serializationBody.Add(LocalDeclarationStatement(VariableDeclaration(
+                    PredefinedType(Token(SyntaxKind.IntKeyword)),
+                    SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
+                        EqualsValueClause(IdentifierName("initialOffset")))))));
 
 
                 foreach (var field in structIdl.Fields)
                 {
-                    serializationBody.AddRange(GenerateArgSerializationSyntaxList(idl.Types, field.Type, IdentifierName(field.Name.ToPascalCase())));
+                    serializationBody.AddRange(GenerateArgSerializationSyntaxList(idl.Types, field.Type,
+                        IdentifierName(field.Name.ToPascalCase())));
                 }
 
-                serializationBody.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"), IdentifierName("initialOffset"))));
+                serializationBody.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression,
+                    IdentifierName("offset"), IdentifierName("initialOffset"))));
 
 
                 classMembers.Add(MethodDeclaration(List<AttributeListSyntax>(),
@@ -1795,10 +1982,13 @@ namespace Solana.Unity.Anchor
                     null,
                     Identifier("Serialize"),
                     null,
-                    ParameterList(SeparatedList(new ParameterSyntax[] {
-                        Parameter(List<AttributeListSyntax>(), TokenList(), ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier())), Identifier("_data"), null),
-                        Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
-
+                    ParameterList(SeparatedList(new ParameterSyntax[]
+                    {
+                        Parameter(List<AttributeListSyntax>(), TokenList(),
+                            ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)),
+                                SingletonList(ArrayRankSpecifier())), Identifier("_data"), null),
+                        Parameter(List<AttributeListSyntax>(), TokenList(),
+                            PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
                     })),
                     List<TypeParameterConstraintClauseSyntax>(),
                     Block(serializationBody),
@@ -1809,25 +1999,26 @@ namespace Solana.Unity.Anchor
 
             if (isAccount)
             {
-
-
-                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
+                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(
+                    PredefinedType(Token(SyntaxKind.IntKeyword)),
                     SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
-                    EqualsValueClause(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))))));
+                        EqualsValueClause(LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0))))))));
 
                 // skip first 8 bytes
-                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.ULongKeyword)),
+                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(
+                    PredefinedType(Token(SyntaxKind.ULongKeyword)),
                     SingletonSeparatedList(VariableDeclarator(Identifier("accountHashValue"), null,
-                    EqualsValueClause(InvocationExpression(MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName("_data"),
-                        IdentifierName("GetU64")),
-                    ArgumentList(SeparatedList(new ArgumentSyntax[]
-                    {
-                        Argument(IdentifierName("offset"))
-                    })))))))));
+                        EqualsValueClause(InvocationExpression(MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName("_data"),
+                                IdentifierName("GetU64")),
+                            ArgumentList(SeparatedList(new ArgumentSyntax[]
+                            {
+                                Argument(IdentifierName("offset"))
+                            })))))))));
 
-                desserializationBody.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression, IdentifierName("offset"),
+                desserializationBody.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.AddAssignmentExpression,
+                    IdentifierName("offset"),
                     LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(8)))));
 
                 var condition = BinaryExpression(
@@ -1841,31 +2032,36 @@ namespace Solana.Unity.Anchor
             }
             else
             {
-
-                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
+                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(
+                    PredefinedType(Token(SyntaxKind.IntKeyword)),
                     SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
-                    EqualsValueClause(IdentifierName("initialOffset")))))));
+                        EqualsValueClause(IdentifierName("initialOffset")))))));
             }
 
             var resultVariableToken = Identifier("result");
             var resulVariable = IdentifierName(resultVariableToken);
-            var constructorCallExpression = ObjectCreationExpression(IdentifierName(structIdl.Name.ToPascalCase()), ArgumentList(), null);
+            var constructorCallExpression =
+                ObjectCreationExpression(IdentifierName(structIdl.Name.ToPascalCase()), ArgumentList(), null);
 
 
             if (isAccount)
             {
-                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName(structIdl.Name.ToPascalCase()),
-                SingletonSeparatedList(VariableDeclarator(resultVariableToken, null,
-                EqualsValueClause(constructorCallExpression))))));
+                desserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(
+                    IdentifierName(structIdl.Name.ToPascalCase()),
+                    SingletonSeparatedList(VariableDeclarator(resultVariableToken, null,
+                        EqualsValueClause(constructorCallExpression))))));
             }
             else
             {
-                desserializationBody.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, resulVariable, constructorCallExpression)));
+                desserializationBody.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                    resulVariable, constructorCallExpression)));
             }
 
             foreach (var field in structIdl.Fields)
             {
-                desserializationBody.AddRange(GenerateDeserializationSyntaxList(idl.Types, field.Type, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, resulVariable, IdentifierName(field.Name.ToPascalCase()))));
+                desserializationBody.AddRange(GenerateDeserializationSyntaxList(idl.Types, field.Type,
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, resulVariable,
+                        IdentifierName(field.Name.ToPascalCase()))));
             }
 
             // if account -> public static AccName Deserialize(byte[] data)
@@ -1881,8 +2077,13 @@ namespace Solana.Unity.Anchor
                     null,
                     Identifier("Deserialize"),
                     null,
-                    ParameterList(SeparatedList(new ParameterSyntax[] {
-                        Parameter(List<AttributeListSyntax>(), TokenList(), GenericName(Identifier("ReadOnlySpan"), TypeArgumentList(SingletonSeparatedList<TypeSyntax>(PredefinedType(Token(SyntaxKind.ByteKeyword))))), Identifier("_data"), null)
+                    ParameterList(SeparatedList(new ParameterSyntax[]
+                    {
+                        Parameter(List<AttributeListSyntax>(), TokenList(),
+                            GenericName(Identifier("ReadOnlySpan"),
+                                TypeArgumentList(
+                                    SingletonSeparatedList<TypeSyntax>(
+                                        PredefinedType(Token(SyntaxKind.ByteKeyword))))), Identifier("_data"), null)
                     })),
                     List<TypeParameterConstraintClauseSyntax>(),
                     Block(desserializationBody),
@@ -1890,7 +2091,8 @@ namespace Solana.Unity.Anchor
             }
             else
             {
-                desserializationBody.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"), IdentifierName("initialOffset"))));
+                desserializationBody.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression,
+                    IdentifierName("offset"), IdentifierName("initialOffset"))));
                 //IdentifierName(structIdl.Name.ToPascalCase()),
                 classMembers.Add(MethodDeclaration(List<AttributeListSyntax>(),
                     ClientGeneratorDefaultValues.PublicStaticModifiers,
@@ -1898,19 +2100,31 @@ namespace Solana.Unity.Anchor
                     null,
                     Identifier("Deserialize"),
                     null,
-                    ParameterList(SeparatedList(new ParameterSyntax[] {
-                        Parameter(List<AttributeListSyntax>(), TokenList(), GenericName(Identifier("ReadOnlySpan"), TypeArgumentList(SingletonSeparatedList<TypeSyntax>(PredefinedType(Token(SyntaxKind.ByteKeyword))))), Identifier("_data"), null),
-                        Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
-                        Parameter(List<AttributeListSyntax>(), TokenList(Token(SyntaxKind.OutKeyword)), IdentifierName(structIdl.Name.ToPascalCase()), resultVariableToken, null)
+                    ParameterList(SeparatedList(new ParameterSyntax[]
+                    {
+                        Parameter(List<AttributeListSyntax>(), TokenList(),
+                            GenericName(Identifier("ReadOnlySpan"),
+                                TypeArgumentList(
+                                    SingletonSeparatedList<TypeSyntax>(
+                                        PredefinedType(Token(SyntaxKind.ByteKeyword))))), Identifier("_data"),
+                            null),
+                        Parameter(List<AttributeListSyntax>(), TokenList(),
+                            PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
+                        Parameter(List<AttributeListSyntax>(), TokenList(Token(SyntaxKind.OutKeyword)),
+                            IdentifierName(structIdl.Name.ToPascalCase()), resultVariableToken, null)
                     })),
                     List<TypeParameterConstraintClauseSyntax>(),
                     Block(desserializationBody),
                     null));
             }
-            return SingletonList<MemberDeclarationSyntax>(ClassDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicPartialModifiers, Identifier(structIdl.Name.ToPascalCase()), null, null, List<TypeParameterConstraintClauseSyntax>(), List(classMembers)));
+
+            return SingletonList<MemberDeclarationSyntax>(ClassDeclaration(List<AttributeListSyntax>(),
+                ClientGeneratorDefaultValues.PublicPartialModifiers, Identifier(structIdl.Name.ToPascalCase()), null,
+                null, List<TypeParameterConstraintClauseSyntax>(), List(classMembers)));
         }
 
-        private SyntaxList<MemberDeclarationSyntax> GenerateEnumDeclaration(Idl idl, EnumIdlTypeDefinition enumIdl, bool generateSerialization)
+        private SyntaxList<MemberDeclarationSyntax> GenerateEnumDeclaration(Idl idl, EnumIdlTypeDefinition enumIdl,
+            bool generateSerialization)
         {
             List<EnumMemberDeclarationSyntax> enumMembers = new();
             List<MemberDeclarationSyntax> supportClasses = new();
@@ -1947,10 +2161,14 @@ namespace Solana.Unity.Anchor
                         caseStatements.AddRange(GenerateArgSerializationSyntaxList(
                             idl.Types,
                             tuple.Fields[i],
-                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(member.Name.ToPascalCase() + "Value"), IdentifierName("Item" + (i + 1)))));
+                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName(member.Name.ToPascalCase() + "Value"),
+                                IdentifierName("Item" + (i + 1)))));
 
 
-                        caseStatementsDeser.Add(LocalDeclarationStatement(VariableDeclaration(GetTypeSyntax(tuple.Fields[i]), SingletonSeparatedList(VariableDeclarator(member.Name + "Item" + (i + 1))))));
+                        caseStatementsDeser.Add(LocalDeclarationStatement(VariableDeclaration(
+                            GetTypeSyntax(tuple.Fields[i]),
+                            SingletonSeparatedList(VariableDeclarator(member.Name + "Item" + (i + 1))))));
 
                         caseStatementsDeser.AddRange(GenerateDeserializationSyntaxList(idl.Types, tuple.Fields[i],
                             IdentifierName(member.Name + "Item" + (i + 1))));
@@ -1958,11 +2176,19 @@ namespace Solana.Unity.Anchor
                         tupleConstructionArgs.Add(Argument(IdentifierName(member.Name + "Item" + (i + 1))));
                     }
 
-                    caseStatementsDeser.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"), IdentifierName(member.Name.ToPascalCase() + "Value")),
-                        InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Tuple"), IdentifierName("Create")), ArgumentList(SeparatedList(tupleConstructionArgs))))));
+                    caseStatementsDeser.Add(ExpressionStatement(AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"),
+                            IdentifierName(member.Name.ToPascalCase() + "Value")),
+                        InvocationExpression(
+                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("Tuple"),
+                                IdentifierName("Create")), ArgumentList(SeparatedList(tupleConstructionArgs))))));
 
-                    mainClassProperties.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier, GenericName(Identifier("Tuple"), TypeArgumentList(SeparatedList(typeSyntaxes))), default, Identifier(member.Name.ToPascalCase() + "Value"), ClientGeneratorDefaultValues.PropertyAccessorList));
-
+                    mainClassProperties.Add(PropertyDeclaration(List<AttributeListSyntax>(),
+                        ClientGeneratorDefaultValues.PublicModifier,
+                        GenericName(Identifier("Tuple"), TypeArgumentList(SeparatedList(typeSyntaxes))), default,
+                        Identifier(member.Name.ToPascalCase() + "Value"),
+                        ClientGeneratorDefaultValues.PropertyAccessorList));
                 }
                 else if (member is NamedFieldsEnumVariant structVariant)
                 {
@@ -1972,34 +2198,49 @@ namespace Solana.Unity.Anchor
 
 
                     body.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
-                            SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
+                        SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
                             EqualsValueClause(IdentifierName("initialOffset")))))));
-                    deserBody.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
-                            SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
+                    deserBody.Add(LocalDeclarationStatement(VariableDeclaration(
+                        PredefinedType(Token(SyntaxKind.IntKeyword)),
+                        SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
                             EqualsValueClause(IdentifierName("initialOffset")))))));
 
-                    deserBody.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, IdentifierName("result"), ObjectCreationExpression(IdentifierName(structVariant.Name.ToPascalCase() + "Type"), ArgumentList(), null))));
+                    deserBody.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                        IdentifierName("result"),
+                        ObjectCreationExpression(IdentifierName(structVariant.Name.ToPascalCase() + "Type"),
+                            ArgumentList(), null))));
 
 
                     foreach (var field in structVariant.Fields)
                     {
-                        fields.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier, GetTypeSyntax(field.Type), default, Identifier(field.Name.ToPascalCase()), ClientGeneratorDefaultValues.PropertyAccessorList));
+                        fields.Add(PropertyDeclaration(List<AttributeListSyntax>(),
+                            ClientGeneratorDefaultValues.PublicModifier, GetTypeSyntax(field.Type), default,
+                            Identifier(field.Name.ToPascalCase()), ClientGeneratorDefaultValues.PropertyAccessorList));
                     }
 
                     foreach (var field in structVariant.Fields)
                     {
-                        body.AddRange(GenerateArgSerializationSyntaxList(idl.Types, field.Type, IdentifierName(field.Name.ToPascalCase())));
+                        body.AddRange(GenerateArgSerializationSyntaxList(idl.Types, field.Type,
+                            IdentifierName(field.Name.ToPascalCase())));
                     }
 
                     foreach (var field in structVariant.Fields)
                     {
-                        deserBody.AddRange(GenerateDeserializationSyntaxList(idl.Types, field.Type, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"), IdentifierName(field.Name.ToPascalCase()))));
+                        deserBody.AddRange(GenerateDeserializationSyntaxList(idl.Types, field.Type,
+                            MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"),
+                                IdentifierName(field.Name.ToPascalCase()))));
                     }
 
-                    body.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"), IdentifierName("initialOffset"))));
+                    body.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"),
+                        IdentifierName("initialOffset"))));
 
 
-                    caseStatementsDeser.Add(LocalDeclarationStatement(VariableDeclaration(IdentifierName(structVariant.Name.ToPascalCase() + "Type"), SingletonSeparatedList(VariableDeclarator(Identifier("tmp" + structVariant.Name.ToPascalCase() + "Value"), null, EqualsValueClause(ObjectCreationExpression(IdentifierName(structVariant.Name.ToPascalCase() + "Type"), ArgumentList(), null)))))));
+                    caseStatementsDeser.Add(LocalDeclarationStatement(VariableDeclaration(
+                        IdentifierName(structVariant.Name.ToPascalCase() + "Type"),
+                        SingletonSeparatedList(VariableDeclarator(
+                            Identifier("tmp" + structVariant.Name.ToPascalCase() + "Value"), null,
+                            EqualsValueClause(ObjectCreationExpression(
+                                IdentifierName(structVariant.Name.ToPascalCase() + "Type"), ArgumentList(), null)))))));
 
 
                     caseStatementsDeser.Add(ExpressionStatement(AssignmentExpression(
@@ -2012,31 +2253,44 @@ namespace Solana.Unity.Anchor
                                 IdentifierName("Deserialize")),
                             ArgumentList(SeparatedList(new ArgumentSyntax[]
                             {
-                                Argument(IdentifierName("_data")),
-                                Argument(IdentifierName("offset")),
-                                Argument(null, Token(SyntaxKind.OutKeyword),IdentifierName("tmp" + structVariant.Name.ToPascalCase() + "Value"))
-
+                                Argument(IdentifierName("_data")), Argument(IdentifierName("offset")),
+                                Argument(null, Token(SyntaxKind.OutKeyword),
+                                    IdentifierName("tmp" + structVariant.Name.ToPascalCase() + "Value"))
                             }))))));
 
-                    caseStatementsDeser.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"), IdentifierName(structVariant.Name.ToPascalCase() + "Value")), IdentifierName("tmp" + structVariant.Name.ToPascalCase() + "Value"))));
+                    caseStatementsDeser.Add(ExpressionStatement(AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"),
+                            IdentifierName(structVariant.Name.ToPascalCase() + "Value")),
+                        IdentifierName("tmp" + structVariant.Name.ToPascalCase() + "Value"))));
 
 
-                    deserBody.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"), IdentifierName("initialOffset"))));
+                    deserBody.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression,
+                        IdentifierName("offset"), IdentifierName("initialOffset"))));
                     //IdentifierName(structIdl.Name.ToPascalCase()),
                     fields.Add(MethodDeclaration(List<AttributeListSyntax>(),
-                            ClientGeneratorDefaultValues.PublicStaticModifiers,
-                            PredefinedType(Token(SyntaxKind.IntKeyword)),
-                            null,
-                            Identifier("Deserialize"),
-                            null,
-                            ParameterList(SeparatedList(new ParameterSyntax[] {
-                        Parameter(List<AttributeListSyntax>(), TokenList(), GenericName(Identifier("ReadOnlySpan"), TypeArgumentList(SingletonSeparatedList<TypeSyntax>(PredefinedType(Token(SyntaxKind.ByteKeyword))))), Identifier("_data"), null),
-                        Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
-                        Parameter(List<AttributeListSyntax>(), TokenList(Token(SyntaxKind.OutKeyword)), IdentifierName(structVariant.Name.ToPascalCase() + "Type"), Identifier("result"), null)
-                            })),
-                            List<TypeParameterConstraintClauseSyntax>(),
-                            Block(deserBody),
-                            null));
+                        ClientGeneratorDefaultValues.PublicStaticModifiers,
+                        PredefinedType(Token(SyntaxKind.IntKeyword)),
+                        null,
+                        Identifier("Deserialize"),
+                        null,
+                        ParameterList(SeparatedList(new ParameterSyntax[]
+                        {
+                            Parameter(List<AttributeListSyntax>(), TokenList(),
+                                GenericName(Identifier("ReadOnlySpan"),
+                                    TypeArgumentList(
+                                        SingletonSeparatedList<TypeSyntax>(
+                                            PredefinedType(Token(SyntaxKind.ByteKeyword))))), Identifier("_data"),
+                                null),
+                            Parameter(List<AttributeListSyntax>(), TokenList(),
+                                PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
+                            Parameter(List<AttributeListSyntax>(), TokenList(Token(SyntaxKind.OutKeyword)),
+                                IdentifierName(structVariant.Name.ToPascalCase() + "Type"), Identifier("result"),
+                                null)
+                        })),
+                        List<TypeParameterConstraintClauseSyntax>(),
+                        Block(deserBody),
+                        null));
 
                     fields.Add(MethodDeclaration(List<AttributeListSyntax>(),
                         ClientGeneratorDefaultValues.PublicModifier,
@@ -2044,9 +2298,13 @@ namespace Solana.Unity.Anchor
                         null,
                         Identifier("Serialize"),
                         null,
-                        ParameterList(SeparatedList(new ParameterSyntax[] {
-                            Parameter(List<AttributeListSyntax>(), TokenList(), ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier())), Identifier("_data"), null),
-                            Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
+                        ParameterList(SeparatedList(new ParameterSyntax[]
+                        {
+                            Parameter(List<AttributeListSyntax>(), TokenList(),
+                                ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)),
+                                    SingletonList(ArrayRankSpecifier())), Identifier("_data"), null),
+                            Parameter(List<AttributeListSyntax>(), TokenList(),
+                                PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
                         })),
                         List<TypeParameterConstraintClauseSyntax>(),
                         Block(body),
@@ -2061,19 +2319,21 @@ namespace Solana.Unity.Anchor
                                 IdentifierName("Serialize")),
                             ArgumentList(SeparatedList(new ArgumentSyntax[]
                             {
-                            Argument(IdentifierName("_data")),
-                            Argument(IdentifierName("offset"))
+                                Argument(IdentifierName("_data")), Argument(IdentifierName("offset"))
                             }))))));
 
                     List<StatementSyntax> supportClassDeserializationBody = new();
 
-                    supportClassDeserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
-                            SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
+                    supportClassDeserializationBody.Add(LocalDeclarationStatement(VariableDeclaration(
+                        PredefinedType(Token(SyntaxKind.IntKeyword)),
+                        SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
                             EqualsValueClause(IdentifierName("initialOffset")))))));
 
-                    supportClassDeserializationBody.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                    supportClassDeserializationBody.Add(ExpressionStatement(AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
                         IdentifierName(enumIdl.Name.ToPascalCase() + "Value"),
-                        ObjectCreationExpression(IdentifierName(enumIdl.Name.ToPascalCase() + "Type"), ArgumentList(), null))));
+                        ObjectCreationExpression(IdentifierName(enumIdl.Name.ToPascalCase() + "Type"), ArgumentList(),
+                            null))));
 
                     //supportClassDeserializationBody.Add(ExpressionStatement(AssignmentExpression(
                     //    SyntaxKind.SimpleAssignmentExpression,
@@ -2090,21 +2350,33 @@ namespace Solana.Unity.Anchor
                             LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(1)))));
 
 
-                    supportClasses.Add(ClassDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicPartialModifiers, Identifier(member.Name.ToPascalCase() + "Type"), null, null, List<TypeParameterConstraintClauseSyntax>(), List(fields)));
+                    supportClasses.Add(ClassDeclaration(List<AttributeListSyntax>(),
+                        ClientGeneratorDefaultValues.PublicPartialModifiers,
+                        Identifier(member.Name.ToPascalCase() + "Type"), null, null,
+                        List<TypeParameterConstraintClauseSyntax>(), List(fields)));
 
-                    mainClassProperties.Add(PropertyDeclaration(List<AttributeListSyntax>(), ClientGeneratorDefaultValues.PublicModifier, IdentifierName(member.Name.ToPascalCase() + "Type"), default, Identifier(member.Name.ToPascalCase() + "Value"), ClientGeneratorDefaultValues.PropertyAccessorList));
+                    mainClassProperties.Add(PropertyDeclaration(List<AttributeListSyntax>(),
+                        ClientGeneratorDefaultValues.PublicModifier,
+                        IdentifierName(member.Name.ToPascalCase() + "Type"), default,
+                        Identifier(member.Name.ToPascalCase() + "Value"),
+                        ClientGeneratorDefaultValues.PropertyAccessorList));
                 }
 
                 if (caseStatements.Count > 0)
                 {
                     caseStatements.Add(BreakStatement());
-                    serializationCases.Add(SwitchSection(SingletonList<SwitchLabelSyntax>(CaseSwitchLabel(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(enumIdl.Name.ToPascalCase() + "Type"), IdentifierName(member.Name)))),
+                    serializationCases.Add(SwitchSection(
+                        SingletonList<SwitchLabelSyntax>(CaseSwitchLabel(MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            IdentifierName(enumIdl.Name.ToPascalCase() + "Type"), IdentifierName(member.Name)))),
                         List(caseStatements)));
 
                     caseStatementsDeser.Add(BreakStatement());
-                    deSerializationCases.Add(SwitchSection(SingletonList<SwitchLabelSyntax>(CaseSwitchLabel(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(enumIdl.Name.ToPascalCase() + "Type"), IdentifierName(member.Name)))),
+                    deSerializationCases.Add(SwitchSection(
+                        SingletonList<SwitchLabelSyntax>(CaseSwitchLabel(MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            IdentifierName(enumIdl.Name.ToPascalCase() + "Type"), IdentifierName(member.Name)))),
                         SingletonList<StatementSyntax>(Block(caseStatementsDeser))));
-
                 }
             }
 
@@ -2114,18 +2386,17 @@ namespace Solana.Unity.Anchor
                     List<AttributeListSyntax>(),
                     ClientGeneratorDefaultValues.PublicModifier,
                     Identifier(enumIdl.Name.ToPascalCase()),
-                    BaseList(SingletonSeparatedList<BaseTypeSyntax>(SimpleBaseType(PredefinedType(Token(SyntaxKind.ByteKeyword))))),
+                    BaseList(SingletonSeparatedList<BaseTypeSyntax>(
+                        SimpleBaseType(PredefinedType(Token(SyntaxKind.ByteKeyword))))),
                     SeparatedList(enumMembers)));
             }
 
             // need to create specific serialization
 
             var ser = Block(
-
-                    LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
-                            SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
-                            EqualsValueClause(IdentifierName("initialOffset")))))),
-
+                LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
+                    SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
+                        EqualsValueClause(IdentifierName("initialOffset")))))),
                 ExpressionStatement(InvocationExpression(
                     MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
@@ -2133,32 +2404,35 @@ namespace Solana.Unity.Anchor
                         IdentifierName("WriteU8")),
                     ArgumentList(SeparatedList(new ArgumentSyntax[]
                     {
-                        Argument(CastExpression(PredefinedType(Token(SyntaxKind.ByteKeyword)), IdentifierName("Type"))),
+                        Argument(CastExpression(PredefinedType(Token(SyntaxKind.ByteKeyword)),
+                            IdentifierName("Type"))),
                         Argument(IdentifierName("offset"))
                     })))),
-
                 ExpressionStatement(AssignmentExpression(
                     SyntaxKind.AddAssignmentExpression,
                     IdentifierName("offset"),
                     LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(1)))),
-
                 SwitchStatement(IdentifierName("Type"), List(serializationCases)),
-
-                ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"), IdentifierName("initialOffset"))));
+                ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"),
+                    IdentifierName("initialOffset"))));
 
             mainClassProperties.Add(MethodDeclaration(List<AttributeListSyntax>(),
-                        ClientGeneratorDefaultValues.PublicModifier,
-                        PredefinedType(Token(SyntaxKind.IntKeyword)),
-                        null,
-                        Identifier("Serialize"),
-                        null,
-                        ParameterList(SeparatedList(new ParameterSyntax[] {
-                            Parameter(List<AttributeListSyntax>(), TokenList(), ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)), SingletonList(ArrayRankSpecifier())), Identifier("_data"), null),
-                            Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
-                        })),
-                        List<TypeParameterConstraintClauseSyntax>(),
-                        ser,
-                        null));
+                ClientGeneratorDefaultValues.PublicModifier,
+                PredefinedType(Token(SyntaxKind.IntKeyword)),
+                null,
+                Identifier("Serialize"),
+                null,
+                ParameterList(SeparatedList(new ParameterSyntax[]
+                {
+                    Parameter(List<AttributeListSyntax>(), TokenList(),
+                        ArrayType(PredefinedType(Token(SyntaxKind.ByteKeyword)),
+                            SingletonList(ArrayRankSpecifier())), Identifier("_data"), null),
+                    Parameter(List<AttributeListSyntax>(), TokenList(),
+                        PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
+                })),
+                List<TypeParameterConstraintClauseSyntax>(),
+                ser,
+                null));
 
             mainClassProperties.Add(PropertyDeclaration(List<AttributeListSyntax>(),
                 ClientGeneratorDefaultValues.PublicModifier,
@@ -2168,32 +2442,34 @@ namespace Solana.Unity.Anchor
                 ClientGeneratorDefaultValues.PropertyAccessorList));
 
 
-
             List<StatementSyntax> finalizedDesserialization = new();
 
-            finalizedDesserialization.Add(LocalDeclarationStatement(VariableDeclaration(PredefinedType(Token(SyntaxKind.IntKeyword)),
-                    SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
+            finalizedDesserialization.Add(LocalDeclarationStatement(VariableDeclaration(
+                PredefinedType(Token(SyntaxKind.IntKeyword)),
+                SingletonSeparatedList(VariableDeclarator(Identifier("offset"), null,
                     EqualsValueClause(IdentifierName("initialOffset")))))));
 
 
             var resultVariableToken = Identifier("result");
             var resulVariable = IdentifierName(resultVariableToken);
-            var constructorCallExpression = ObjectCreationExpression(IdentifierName(enumIdl.Name.ToPascalCase()), ArgumentList(), null);
+            var constructorCallExpression =
+                ObjectCreationExpression(IdentifierName(enumIdl.Name.ToPascalCase()), ArgumentList(), null);
 
-            finalizedDesserialization.Add(ExpressionStatement(AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, resulVariable, constructorCallExpression)));
+            finalizedDesserialization.Add(ExpressionStatement(
+                AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, resulVariable, constructorCallExpression)));
 
             var enumValueToken = Identifier("resulVal");
             var enumValueVariable = IdentifierName(enumValueToken);
 
-            var invocation = InvocationExpression(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("_data"), IdentifierName("GetU8")),
-                ArgumentList(SeparatedList(new ArgumentSyntax[]
-                {
-                    Argument(IdentifierName("offset"))
-                })));
+            var invocation = InvocationExpression(
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("_data"),
+                    IdentifierName("GetU8")),
+                ArgumentList(SeparatedList(new ArgumentSyntax[] { Argument(IdentifierName("offset")) })));
 
             finalizedDesserialization.Add(ExpressionStatement(AssignmentExpression(
                 SyntaxKind.SimpleAssignmentExpression,
-                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"), IdentifierName("Type")),
+                MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"),
+                    IdentifierName("Type")),
                 CastExpression(IdentifierName(enumIdl.Name.ToPascalCase() + "Type"), invocation))));
 
             finalizedDesserialization.Add(
@@ -2205,7 +2481,9 @@ namespace Solana.Unity.Anchor
             //finalizedDesserialization.AddRange(desserializationBody);
 
             finalizedDesserialization.Add(
-                SwitchStatement(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"), IdentifierName("Type")), List(deSerializationCases)));
+                SwitchStatement(
+                    MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName("result"),
+                        IdentifierName("Type")), List(deSerializationCases)));
 
             //foreach (var field in structIdl.Fields)
             //{
@@ -2215,22 +2493,30 @@ namespace Solana.Unity.Anchor
             // if account -> public static AccName Deserialize(byte[] data)
             // else ->       public static int Deserialize(byte[] data, int initialOffset, out ObjName result)
 
-            finalizedDesserialization.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression, IdentifierName("offset"), IdentifierName("initialOffset"))));
+            finalizedDesserialization.Add(ReturnStatement(BinaryExpression(SyntaxKind.SubtractExpression,
+                IdentifierName("offset"), IdentifierName("initialOffset"))));
             //IdentifierName(structIdl.Name.ToPascalCase()),
             mainClassProperties.Add(MethodDeclaration(List<AttributeListSyntax>(),
-                    ClientGeneratorDefaultValues.PublicStaticModifiers,
-                    PredefinedType(Token(SyntaxKind.IntKeyword)),
-                    null,
-                    Identifier("Deserialize"),
-                    null,
-                    ParameterList(SeparatedList(new ParameterSyntax[] {
-                        Parameter(List<AttributeListSyntax>(), TokenList(), GenericName(Identifier("ReadOnlySpan"), TypeArgumentList(SingletonSeparatedList<TypeSyntax>(PredefinedType(Token(SyntaxKind.ByteKeyword))))), Identifier("_data"), null),
-                        Parameter(List<AttributeListSyntax>(), TokenList(), PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
-                        Parameter(List<AttributeListSyntax>(), TokenList(Token(SyntaxKind.OutKeyword)), IdentifierName(enumIdl.Name.ToPascalCase()), resultVariableToken, null)
-                    })),
-                    List<TypeParameterConstraintClauseSyntax>(),
-                    Block(finalizedDesserialization),
-                    null));
+                ClientGeneratorDefaultValues.PublicStaticModifiers,
+                PredefinedType(Token(SyntaxKind.IntKeyword)),
+                null,
+                Identifier("Deserialize"),
+                null,
+                ParameterList(SeparatedList(new ParameterSyntax[]
+                {
+                    Parameter(List<AttributeListSyntax>(), TokenList(),
+                        GenericName(Identifier("ReadOnlySpan"),
+                            TypeArgumentList(
+                                SingletonSeparatedList<TypeSyntax>(PredefinedType(Token(SyntaxKind.ByteKeyword))))),
+                        Identifier("_data"), null),
+                    Parameter(List<AttributeListSyntax>(), TokenList(),
+                        PredefinedType(Token(SyntaxKind.IntKeyword)), Identifier("initialOffset"), null),
+                    Parameter(List<AttributeListSyntax>(), TokenList(Token(SyntaxKind.OutKeyword)),
+                        IdentifierName(enumIdl.Name.ToPascalCase()), resultVariableToken, null)
+                })),
+                List<TypeParameterConstraintClauseSyntax>(),
+                Block(finalizedDesserialization),
+                null));
 
             supportClasses.Add(ClassDeclaration(List<AttributeListSyntax>(),
                 ClientGeneratorDefaultValues.PublicPartialModifiers,
@@ -2244,7 +2530,8 @@ namespace Solana.Unity.Anchor
                 List<AttributeListSyntax>(),
                 ClientGeneratorDefaultValues.PublicModifier,
                 Identifier(enumIdl.Name.ToPascalCase() + "Type"),
-                BaseList(SingletonSeparatedList<BaseTypeSyntax>(SimpleBaseType(PredefinedType(Token(SyntaxKind.ByteKeyword))))),
+                BaseList(SingletonSeparatedList<BaseTypeSyntax>(
+                    SimpleBaseType(PredefinedType(Token(SyntaxKind.ByteKeyword))))),
                 SeparatedList(enumMembers))).AddRange(supportClasses);
         }
 
@@ -2254,11 +2541,10 @@ namespace Solana.Unity.Anchor
 
             for (int i = 0; i < idl.Events.Length; i++)
             {
-
-
             }
 
-            return NamespaceDeclaration(IdentifierName("Events"), List<ExternAliasDirectiveSyntax>(), List<UsingDirectiveSyntax>(), events);
+            return NamespaceDeclaration(IdentifierName("Events"), List<ExternAliasDirectiveSyntax>(),
+                List<UsingDirectiveSyntax>(), events);
         }
 
         private MemberDeclarationSyntax GenerateErrorsSyntaxTree(Idl idl)
@@ -2297,7 +2583,8 @@ namespace Solana.Unity.Anchor
                 accounts.AddRange(GenerateTypeDeclaration(idl, idl.Accounts[i], false, true));
             }
 
-            return NamespaceDeclaration(IdentifierName("Accounts"), List<ExternAliasDirectiveSyntax>(), List<UsingDirectiveSyntax>(), List(accounts));
+            return NamespaceDeclaration(IdentifierName("Accounts"), List<ExternAliasDirectiveSyntax>(),
+                List<UsingDirectiveSyntax>(), List(accounts));
         }
 
 

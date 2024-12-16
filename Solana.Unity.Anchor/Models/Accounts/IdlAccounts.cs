@@ -12,6 +12,7 @@ namespace Solana.Unity.Anchor.Models.Accounts
     public class IdlAccounts : IIdlAccountItem
     {
         public string Name { get; set; }
+        public string Address { get; set; }
 
         public string FullName { get; set; }
 
