@@ -21,6 +21,6 @@ jobs:
       - name: Run cake
         shell: bash
         run: |
-          dotnet tool install Cake.Tool --version 1.1.0
+          dotnet tool install Cake.Tool --version 1.1.0 --global
           dotnet tool restore
-          dotnet cake --target=Test --verbosity=verbose          dotnet cake --target=Test --verbosity=verbose
+          ~/.dotnet/tools/dotnet-cake --target=Test --verbosity=verbose          dotnet cake --target=Test --verbosity=verbose          dotnet cake --target=Test --verbosity=verbose
