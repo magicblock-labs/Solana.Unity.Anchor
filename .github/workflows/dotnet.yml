@@ -23,4 +23,4 @@ jobs:
         run: |
           dotnet tool install Cake.Tool --version 1.1.0 --global
           dotnet tool restore
-          ~/.dotnet/tools/dotnet-cake --target=Test --verbosity=verbose          dotnet cake --target=Test --verbosity=verbose          dotnet cake --target=Test --verbosity=verbose
+          dotnet cake --target=Pack --verbosity=verbose
