@@ -10,11 +10,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+          
       - name: Get the sources
         uses: actions/checkout@v2
+        
       - name: Run cake
         shell: bash
         run: |
           dotnet tool install Cake.Tool --version 1.1.0
           dotnet tool restore
-          dotnet cake --target=Test --verbosity=verbose
+          dotnet cake --target=Test --verbosity=verbose          dotnet cake --target=Test --verbosity=verbose
