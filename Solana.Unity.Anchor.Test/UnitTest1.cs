@@ -95,6 +95,21 @@ namespace Solana.Unity.Anchor.Test
             var code = c.GenerateCode(res);
             Assert.IsNotNull(code);
         }
+        
+        [TestMethod]
+        public void TestHerosParsing()
+        {
+            var res = IdlParser.ParseFile("Resources/Hero.json");
+            Assert.IsNotNull(res);
+
+            ClientGenerator c = new();
+
+            c.GenerateSyntaxTree(res);
+            Assert.IsNotNull(c);
+
+            var code = c.GenerateCode(res);
+            Assert.IsNotNull(code);
+        }
     }
 }
 
