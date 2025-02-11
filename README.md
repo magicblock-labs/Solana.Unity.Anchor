@@ -38,8 +38,8 @@ Currently covers all of IDL features with the exception of events and seeds.
 
 ## Requirements
 
-Solana.Unity.Anchor and Solana.Unity.Anchor.Tool are compiled and run in net6. Could be easily backported to net5.
-Solana.Unity.Anchor.SourceGenerator is compiled in netstandard2.1 to be able to be used as a Roslyn Source Generator. However, machine needs net6 as it just calls Solnet.Anchor.Tool that requires net6.
+Solana.Unity.Anchor and Solana.Unity.Anchor.Tool are compiled and run in net8. Could be easily backported to net5.
+Solana.Unity.Anchor.SourceGenerator is compiled in netstandard2.1 to be able to be used as a Roslyn Source Generator. However, machine needs net8 as it just calls Solnet.Anchor.Tool that requires net8.
 
 ## Instructions
 

@@ -6,7 +6,7 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<StartupObject>AnchorSourceGenerator</StartupObject>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 
 		<PackAsTool>true</PackAsTool>
 		<ToolCommandName>dotnet-anchorgen</ToolCommandName>
