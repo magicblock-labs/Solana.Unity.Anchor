@@ -895,8 +895,10 @@ namespace Solana.Unity.Anchor
                 "i32" => (IdentifierName("WriteS32"), 4),
                 "u64" => (IdentifierName("WriteU64"), 8),
                 "i64" => (IdentifierName("WriteS64"), 8),
+                "f32" => (IdentifierName("WriteSingle"), 4),
+                "f64" => (IdentifierName("WriteDouble"), 8),
                 "bool" => (IdentifierName("WriteBool"), 1),
-                _ => throw new Exception("Unexpected Type.")
+                _ => throw new Exception("Unexpected Type: " + valueType.TypeName)
             };
 
 
@@ -914,7 +916,7 @@ namespace Solana.Unity.Anchor
                 "f32" => (IdentifierName("GetSingle"), 4),
                 "f64" => (IdentifierName("GetDouble"), 8),
                 "bool" => (IdentifierName("GetBool"), 1),
-                _ => throw new Exception("Unexpected Type.")
+                _ => throw new Exception("Unexpected Type: " + valueType.TypeName)
             };
 
         private List<MemberDeclarationSyntax> GenerateAccountsClassSyntaxTree(IIdlAccountItem[] accounts, string v)
